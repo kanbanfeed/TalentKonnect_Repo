@@ -57,14 +57,8 @@ function createSubmissionItem(item) {
         select.appendChild(option);
     });
 
-    //   select.addEventListener("change", (e) => {
-    //     const newCategory = e.target.value;
-    //     console.log(`Item ${item.id} changed to:`, newCategory);
-    //     // Will trigger API call later in Step 4
-    //   });
     select.addEventListener("change", async (e) => {
-        const newCategory = e.target.value;
-
+        const newCategory = e.target.value;        
         try {
             const res = await fetch(`api/admin/clusters/${item.id}`, {
                 method: 'POST',
@@ -75,7 +69,7 @@ function createSubmissionItem(item) {
             });
             // After successful fetch
             const successMark = document.createElement("span");
-            successMark.textContent = "✅";
+            successMark.textContent = "Suceessfully fetched";
             successMark.classList.add("save-feedback");
             select.parentNode.appendChild(successMark);
 
@@ -85,11 +79,10 @@ function createSubmissionItem(item) {
                 throw new Error('Failed to save');
             }
 
-            console.log(`✅ Saved item ${item.id} with category: ${newCategory}`);
+            console.log(`Saved item ${item.id} with category: ${newCategory}`);
 
-            // Optional: show a confirmation checkmark/sparkle here
         } catch (error) {
-            console.error(`❌ Error saving item ${item.id}:`, error);
+            console.error(`Error saving item ${item.id}:`, error);
             alert('Something went wrong while saving!');
         }
     });
@@ -112,8 +105,6 @@ function renderItems() {
     });
 }
 
-
-
 // Call on load
 renderItems();
 
@@ -128,7 +119,7 @@ document.getElementById("approveAllBtn").addEventListener("click", async () => {
                 body: JSON.stringify({ pending: false }) // assuming this marks it reviewed
             });
             const notice = document.createElement("div");
-            notice.textContent = "✅ All items approved!";
+            notice.textContent = "All items approved!";
             notice.className = "action-feedback";
             document.body.appendChild(notice);
 
@@ -139,11 +130,10 @@ document.getElementById("approveAllBtn").addEventListener("click", async () => {
             // update local state
             item.pending = false;
         } catch (err) {
-            console.error(`❌ Error approving item ${item.id}`, err);
+            console.error(`Error approving item ${item.id}`, err);
         }
     }
 
-    // Rerender the updated UI
     renderItems();
 });
 
@@ -167,10 +157,10 @@ document.getElementById("reassignBtn").addEventListener("click", async () => {
 
             item.category = newCategory;
         } catch (err) {
-            console.error(`❌ Error reassigning item ${item.id}`, err);
+            console.error(`Error reassigning item ${item.id}`, err);
         }
     }
 
-    renderItems(); // re-render UI
+    renderItems(); 
 });
 

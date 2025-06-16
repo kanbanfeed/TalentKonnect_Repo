@@ -46,6 +46,8 @@ body {
 
 .btn {
   font-family: var(--font-ui);
+  background-color: var(--accent-orange);
+  color: white;
   padding: 10px 16px;
   border-radius: 8px;
   cursor: pointer;
@@ -54,19 +56,11 @@ body {
   transition: all 0.2s ease-out;
 }
 
-.btn.primary {
-  background-color: var(--accent-orange);
-  color: white;
-}
-
-.btn.secondary {
-  background-color: transparent;
-  border: 2px solid var(--primary-blue);
-  color: var(--primary-blue);
-}
 
 .btn:hover {
   opacity: 0.9;
+  transform: scale(1.05);
+  transition: all 0.3s ease-in-out;
 }
 
 
@@ -96,7 +90,11 @@ body {
   display: inline-block;
   margin-top: 6px;
 }
-
+.tag:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
+  transition: all 0.3s ease-in-out;
+}
 select {
   margin-top: 10px;
   padding: 6px 12px;
@@ -133,7 +131,7 @@ select {
   top: 20px;
   right: 20px;
   background: var(--orange);
-  color: white;
+  color: var(--neutral-dark);
   padding: 10px 20px;
   border-radius: 10px;
   font-family: 'Inter', sans-serif;
