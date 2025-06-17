@@ -1,0 +1,62 @@
+/* TalentKonnect Brand Colors */
+:root {
+  --primary-blue: #1D3557;
+  --accent-orange: #E76F51;
+  --neutral-light: #F1FAEE;
+  --neutral-dark: #2A2D34;
+
+  /* Extended Color Palette */
+  --success-green: #2D7D32;
+  --warning-amber: #F57C00;
+  --error-red: #D32F2F;
+  --info-blue: #1976D2;
+
+  /* Neutral Grays */
+  --gray-50: #FAFAFA;
+  --gray-100: #F5F5F5;
+  --gray-200: #EEEEEE;
+  --gray-300: #E0E0E0;
+  --gray-400: #BDBDBD;
+  --gray-500: #9E9E9E;
+  --gray-600: #757575;
+  --gray-700: #616161;
+  --gray-800: #424242;
+  --gray-900: #212121;
+
+  /* UI Element Properties */
+  --button-border-radius: 8px;
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --card-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --card-padding: 24px;
+  --card-border-radius: 12px;
+
+  /* Animation */
+  --transition-duration: 250ms;
+  --transition-ease: ease-out;
+  --transition-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* Spacing System (8px base) */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 64px;
+
+  /* Typography Scale */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+
+  /* Breakpoints */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+}
