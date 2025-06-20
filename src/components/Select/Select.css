@@ -1,0 +1,98 @@
+.select-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.select-label {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  color: var(--neutral-dark);
+}
+
+.select-container {
+  position: relative;
+  display: inline-block;
+}
+
+.select {
+  appearance: none;
+  background-color: white;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--button-border-radius);
+  font-family: 'Lora', serif;
+  font-size: var(--font-size-base);
+  color: var(--neutral-dark);
+  cursor: pointer;
+  transition: all var(--transition-duration) var(--transition-ease);
+  width: 100%;
+  padding-right: var(--spacing-xl);
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--accent-orange);
+  box-shadow: 0 0 0 3px rgba(231, 111, 81, 0.1);
+}
+
+.select:hover {
+  border-color: var(--gray-400);
+}
+
+.select:disabled {
+  background-color: var(--gray-100);
+  color: var(--gray-500);
+  cursor: not-allowed;
+}
+
+.select-icon {
+  position: absolute;
+  right: var(--spacing-md);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gray-500);
+  pointer-events: none;
+  transition: transform var(--transition-duration) var(--transition-ease);
+}
+
+.select-wrapper--sm .select {
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  min-height: 32px;
+}
+
+.select-wrapper--sm .select-icon {
+  right: var(--spacing-sm);
+}
+
+.select-wrapper--md .select {
+  padding: var(--spacing-md);
+  min-height: 40px;
+}
+
+.select-wrapper--lg .select {
+  padding: var(--spacing-lg) var(--spacing-md);
+  font-size: var(--font-size-lg);
+  min-height: 48px;
+}
+
+.select-wrapper--error .select {
+  border-color: var(--error-red);
+}
+
+.select-wrapper--error .select:focus {
+  border-color: var(--error-red);
+  box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+}
+
+.select-error {
+  font-size: var(--font-size-xs);
+  color: var(--error-red);
+  font-family: 'Inter', sans-serif;
+}
+
+/* Hover state for the icon */
+.select-wrapper:hover .select-icon {
+  transform: translateY(-50%) rotate(180deg);
+}

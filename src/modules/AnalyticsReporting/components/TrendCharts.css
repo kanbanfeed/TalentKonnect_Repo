@@ -1,0 +1,140 @@
+.trend-charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+@media (max-width: 640px) {
+  .trend-charts {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chart-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  position: relative;
+  overflow: hidden;
+  min-height: 240px;
+}
+
+.chart-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+}
+
+.chart-info {
+  flex: 1;
+}
+
+.chart-title {
+  font-family: 'Inter', sans-serif;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--primary-blue);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.chart-description {
+  font-size: var(--font-size-sm);
+  color: var(--gray-600);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.chart-current-value {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--spacing-xs);
+}
+
+.current-label {
+  font-size: var(--font-size-xs);
+  color: var(--gray-500);
+  font-family: 'Inter', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.current-value {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: var(--font-size-xl);
+  line-height: 1;
+}
+
+.chart-container {
+  flex: 1;
+  position: relative;
+  min-height: 120px;
+  margin: 0 calc(-1 * var(--spacing-md));
+  padding: 0 var(--spacing-md);
+}
+
+.chart-container canvas {
+  border-radius: var(--button-border-radius);
+}
+
+.chart-footer .trend-indicator {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--gray-200);
+}
+
+.trend-label {
+  font-size: var(--font-size-sm);
+  color: var(--gray-600);
+  font-family: 'Inter', sans-serif;
+}
+
+.trend-dots {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.trend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  transition: all var(--transition-duration) var(--transition-ease);
+}
+
+.trend-dot.up {
+  background-color: var(--success-green) !important;
+}
+
+.trend-dot.down {
+  background-color: var(--error-red) !important;
+}
+
+.trend-dot.neutral {
+  background-color: var(--gray-400) !important;
+}
+
+/* Subtle gradient overlay for depth */
+.chart-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(29, 53, 87, 0.1), transparent);
+  opacity: 0;
+  transition: opacity var(--transition-duration) var(--transition-ease);
+}
+
+.chart-card:hover::before {
+  opacity: 1;
+}
