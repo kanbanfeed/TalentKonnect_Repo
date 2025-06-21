@@ -20,11 +20,6 @@
       ]
     }
   ],
-  "functions": {
-    "app/api/**/*.ts": {
-      "runtime": "nodejs18.x"
-    }
-  },
   "env": {
     "SKIP_PREFLIGHT_CHECK": "true",
     "DISABLE_ESLINT_PLUGIN": "true"
