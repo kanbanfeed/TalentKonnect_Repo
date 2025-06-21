@@ -1,20 +1,84 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import './App.css';
 
 const App: React.FC = () => {
+  const [activeModule, setActiveModule] = useState('onboarding');
+
   const modules = [
-    { name: 'Onboarding', path: '/modules/onboarding/index.html', description: 'User onboarding module' },
-    { name: 'Wallet', path: '/modules/wallet/index.html', description: 'Wallet management module' },
-    { name: 'Post Gig', path: '/modules/post-gig/index.html', description: 'Post gig functionality' },
-    { name: 'Complete Gig', path: '/modules/complete-gig/index.html', description: 'Complete gig module' },
-    { name: 'Feed', path: '/modules/feed/index.html', description: 'Feed module' },
-    { name: 'Referral', path: '/modules/referral/index.html', description: 'Referral system' },
-    { name: 'Credit-to-Token Conversion', path: '/modules/credit-to-token-conversion/index.html', description: 'Credit conversion module' },
-    { name: 'Notifications & Reminders', path: '/modules/notifications-reminders/index.html', description: 'Notifications system' },
-    { name: 'Admin Clustering Dashboard', path: '/modules/admin-clustering-dashboard/index.html', description: 'Admin clustering' },
-    { name: 'Analytics & Reporting', path: '/modules/analytics-reporting/index.html', description: 'Analytics dashboard' }
+    { 
+      name: 'Onboarding', 
+      key: 'onboarding',
+      icon: '👤',
+      url: 'https://marvelous-salamander-ad0b63.netlify.app/',
+      description: 'User onboarding & skill declaration'
+    },
+    { 
+      name: 'Wallet', 
+      key: 'wallet',
+      icon: '💰',
+      url: 'https://illustrious-conkies-8acc67.netlify.app/',
+      description: 'Credit wallet & ledger API'
+    },
+    { 
+      name: 'Post Gig', 
+      key: 'post-gig',
+      icon: '📝',
+      url: 'https://684d1b298370479379eda1a8--candidate-003-talentkonnect-module-po.netlify.app/',
+      description: 'Micro-task posting'
+    },
+    { 
+      name: 'Complete Gig', 
+      key: 'complete-gig',
+      icon: '✅',
+      url: 'https://candidate-004-talentkonnect-module-co.netlify.app/',
+      description: 'Micro-task matching & completion'
+    },
+    { 
+      name: 'Feed', 
+      key: 'feed',
+      icon: '📰',
+      url: 'https://sweet-phoenix-fee6a2.netlify.app/',
+      description: 'Feed & discovery'
+    },
+    { 
+      name: 'Referral', 
+      key: 'referral',
+      icon: '🤝',
+      url: 'https://starlit-blini-d5e2d3.netlify.app/',
+      description: 'Referral widget'
+    },
+    { 
+      name: 'Credit Conversion', 
+      key: 'credit-conversion',
+      icon: '🔄',
+      url: 'https://talentkonnect-shujath.netlify.app/',
+      description: 'Credit-to-token conversion'
+    },
+    { 
+      name: 'Notifications', 
+      key: 'notifications',
+      icon: '🔔',
+      url: 'https://talentkonnect-assessment.netlify.app/',
+      description: 'Notifications & reminders'
+    },
+    { 
+      name: 'Admin Clustering', 
+      key: 'admin-clustering',
+      icon: '👥',
+      url: 'https://talentkonnect-clustering-ayushmaan.netlify.app/',
+      description: 'Admin clustering dashboard'
+    },
+    { 
+      name: 'Analytics', 
+      key: 'analytics',
+      icon: '📊',
+      url: 'https://merry-bunny-e481b5.netlify.app/',
+      description: 'Analytics & reporting'
+    }
   ];
+
+  const currentModule = modules.find(m => m.key === activeModule);
 
   return (
     <Router>
@@ -24,33 +88,45 @@ const App: React.FC = () => {
             <div className="logo">
               <span className="logo-talent">talent</span><span className="logo-konnect">konnect</span>
             </div>
-            <h1>TalentKonnect Monorepo</h1>
+            <h1>Gamified Micro-Task Marketplace</h1>
           </div>
         </header>
 
-        <main className="app-main-content">
-          <div className="modules-grid">
-            <h2>Available Modules</h2>
-            <p>Click on any module to view it in its original form:</p>
-            
-            <div className="modules-list">
+        <div className="app-layout">
+          <nav className="sidebar">
+            <div className="nav-section">
+              <h3>Modules</h3>
               {modules.map((module, index) => (
-                <div key={index} className="module-card">
-                  <h3>{module.name}</h3>
-                  <p>{module.description}</p>
-                  <a 
-                    href={module.path} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="module-link"
-                  >
-                    Open Module
-                  </a>
-                </div>
+                <button 
+                  key={index} 
+                  onClick={() => setActiveModule(module.key)}
+                  className={`nav-link ${activeModule === module.key ? 'active' : ''}`}
+                >
+                  <span className="nav-icon">{module.icon}</span>
+                  <span className="nav-text">{module.name}</span>
+                </button>
               ))}
             </div>
-          </div>
-        </main>
+          </nav>
+
+          <main className="main-content">
+            <div className="module-header">
+              <h2>{currentModule?.name}</h2>
+              <p>{currentModule?.description}</p>
+            </div>
+            
+            <div className="module-frame">
+              {currentModule && (
+                <iframe
+                  src={currentModule.url}
+                  title={currentModule.name}
+                  className="module-iframe"
+                  sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                />
+              )}
+            </div>
+          </main>
+        </div>
       </div>
     </Router>
   );
