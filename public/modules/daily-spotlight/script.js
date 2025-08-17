@@ -40,7 +40,7 @@ var API_BASE = location.hostname === "localhost" ? "http://localhost:3000" : "";
 // ---- API loader (fills currentWinner + next selection time) ----
 async function loadWinnerFromApi() {
   try {
-    var r = await fetch(API_BASE + "/api/spotlight/current");
+    var r = await fetch(`${API_BASE}/api/spotlight/current`);
     if (!r.ok) throw new Error("HTTP " + r.status);
     var data = await r.json();
     var w = data.winner || {};

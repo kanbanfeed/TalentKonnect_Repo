@@ -5,7 +5,6 @@ import './App.css';
 const App: React.FC = () => {
   const [activeModule, setActiveModule] = useState('onboarding');
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
   const [ticketCount, setTicketCount] = useState<number>(0);
 
 // read last used userId (set by raffle form / success page)
@@ -16,8 +15,8 @@ const currentUserId =
 async function refreshTickets() {
   try {
     if (!currentUserId) return;
-    const base = location.hostname === 'localhost' ? 'http://localhost:3000' : '';
-    const r = await fetch(`${base}/api/raffle/tickets/${encodeURIComponent(currentUserId)}`);
+    const API_BASE = location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+    const r = await fetch(`${API_BASE}/api/raffle/tickets/${encodeURIComponent(currentUserId)}`);
     if (!r.ok) return;
     const data = await r.json();
     setTicketCount(Number(data?.tickets || 0));
