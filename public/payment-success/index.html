@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Payment Success</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body{
+      font-family:Inter,system-ui;
+      display:grid;
+      place-items:center;
+      min-height:100vh;
+      background:#f8fafc;
+      color:#111827;
+    }
+    .card{
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:12px;
+      padding:24px;
+      max-width:560px;
+    }
+    .ok{ color:#10B981; font-weight:700; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1 class="ok">✅ Payment received</h1>
+    <p id="msg">Verifying your purchase…</p>
+
+    <!-- ✅ Add this line -->
+    <div id="confirm" style="margin-top:1rem; font-weight:600;">Processing your payment…</div>
+
+    <script>
+
+  // dev/prod base
+  const API_BASE = location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+
+  // read Stripe session id (present only if using Checkout Sessions; not needed for Payment Links)
+  const params = new URLSearchParams(location.search);
+  const sid = params.get('session_id');
+
+  // DOM refs
+  const msg = document.getElementById('msg');
+  let confirmEl = document.getElementById('confirm');
+  if (!confirmEl) {
+    confirmEl = document.createElement('div');
+    confirmEl.id = 'confirm';
+    confirmEl.style.marginTop = '1rem';
+    confirmEl.style.fontWeight = '600';
+    document.querySelector('.card').appendChild(confirmEl);
+  }
+
+  // pull the data we stashed before redirect
+  const pending = JSON.parse(localStorage.getItem('tk_pending_checkout') || '{}');
+  const userId  = pending.userId || sessionStorage.getItem('raffle_userId') || '';
+  const entries = Number(pending.entries || sessionStorage.getItem('raffle_entries') || 0);
+
+  // show the session id (if any)
+  msg.textContent = sid ? `Checkout session: ${sid}` : 'Verifying your purchase…';
+
+  // bail early if we have nothing to credit
+  if (!userId || !entries) {
+    confirmEl.textContent = 'Could not find purchase details to credit. (No user/entries found)';
+  } else {
+    confirmEl.textContent = 'Processing your payment…';
+
+    // call local API to credit tickets
+    fetch(`${API_BASE}/api/raffle/credit`, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json' },
+      body: JSON.stringify({ userId, entries })
+    })
+    .then(async r => {
+      const data = await r.json().catch(()=> ({}));
+      if (!r.ok) throw new Error(data?.error || `HTTP ${r.status}`);
+      confirmEl.textContent = `✅ Payment received — ${entries} raffle entr${entries>1?'ies':'y'} added to your account. (Total: ${data.totalTickets})`;
+
+      // clear the stash so we don’t double-credit on refresh
+      localStorage.removeItem('tk_pending_checkout');
+      sessionStorage.removeItem('raffle_userId');
+      sessionStorage.removeItem('raffle_entries');
+    })
+    .catch(err => {
+      console.error('[payment-success] credit error', err);
+      confirmEl.textContent = '❗ Payment ok, but crediting failed. Please retry or contact support.';
+    });
+  }
+
+
+    </script>
+  </div>
+</body>
+</html>

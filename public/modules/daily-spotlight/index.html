@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Spotlight Dashboard</title>
+    <link rel="stylesheet" href="./style.css">
+    <script>
+  window.exports = window;
+  window.module = { exports: window };
+</script>
+    <script src="./databasefuntion.js" defer></script>
+
+    <script src="./skillbracket.js" defer></script>
+    <script src="./spotlightselection.js" defer></script>
+    <script src="./currentspotlight.js" defer></script>
+    <script src="./emailservice.js" defer></script>
+    <script src="./emailnotification.js" defer></script>
+
+<!-- main script last -->
+    <script src="./script.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Daily Spotlight Dashboard</h1>
+            <p>Celebrating top-scored submissions every day at 04:30 IST</p>
+        </header>
+
+        <div class="cron-status">
+            <div class="status-indicator">
+                <span class="status-dot"></span>
+                <span>Next spotlight selection: <strong id="next-selection"></strong></span>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="card spotlight-winner">
+                <h2>🏆 Today's Spotlight Winner</h2>
+                <div class="winner-info">
+                    <div class="winner-avatar" id="winner-avatar">AK</div>
+                    <div class="winner-details">
+                        <h3 id="winner-name">Alex Kumar</h3>
+                        <p id="winner-time">Selected 6 hours ago</p>
+                    </div>
+                </div>
+                <div class="submission-title" id="submission-title">
+                    "Advanced React Performance Optimization Techniques"
+                </div>
+                <div class="submission-meta">
+                    <div class="meta-item">
+                        <span class="score-badge" id="submission-score">847</span>
+                        <span>points</span>
+                    </div>
+                    <div class="meta-item">
+                        <span>📅</span>
+                        <span id="submission-date">Jan 15, 2025</span>
+                    </div>
+                    <div class="meta-item">
+                        <span>⏰</span>
+                        <span id="submission-time">08:42 AM</span>
+                    </div>
+                </div>
+                <p id="submission-preview" style="font-size: 14px; color: #6b7280; line-height: 1.6;">
+                    Comprehensive guide covering memo, useMemo, useCallback, code splitting, and bundle optimization strategies for React applications...
+                </p>
+            </div>
+
+            <div class="card skill-bracket">
+                <h2>⚡ Current Skill Bracket</h2>
+                <div class="bracket-counter" id="bracket-counter">47</div>
+                <div class="bracket-label">Submissions this cycle</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 47%"></div>
+                </div>
+                <div class="next-spotlight">Next bracket milestone: 100 submissions</div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-primary" onclick="runSpotlightSelection()" aria-label="Run manual spotlight selection">
+                🔄 Run Selection
+            </button>
+            <button class="btn btn-secondary" onclick="sendTestEmail()" aria-label="Send test notification email">
+                📧 Test Email
+            </button>
+            <button class="btn btn-secondary" onclick="viewAnalytics()" aria-label="View spotlight analytics">
+                📊 View Analytics
+            </button>
+        </div>
+
+        <div class="email-template">
+            <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 1.5rem; color: #111827;">
+                📧 Email Notification Template
+            </h2>
+            <div class="template-preview">
+                <div class="email-header">
+                    <div class="email-logo"></div>
+                    <h3 style="font-size: 20px; font-weight: 600; color: #111827;">Congratulations!</h3>
+                    <p style="font-size: 16px; color: #6b7280;">You've been selected for today's Daily Spotlight</p>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="font-size: 16px; font-weight: 600; color: #111827; margin-bottom: 1rem;">
+                        Hi <span id="email-winner-name"></span>,
+                    </h4>
+                    <p style="font-size: 14px; color: #374151; line-height: 1.6; margin-bottom: 1rem;">
+                        Great news! Your submission <strong>"<span id="email-submission-title"></span>"</strong> has been selected as today's Daily Spotlight winner with a score of <strong><span id="email-score"></span> points</strong>.
+                    </p>
+                    <p style="font-size: 14px; color: #374151; line-height: 1.6; margin-bottom: 1.5rem;">
+                        Your high-quality contribution stood out among all submissions in the last 24 hours. As our spotlight winner, you've earned:
+                    </p>
+                    
+                    <div style="background: #f0f9ff; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+                        <div style="font-size: 16px; font-weight: 600; color: #0369a1; margin-bottom: 0.5rem;">
+                            🎉 Spotlight Reward: 100 Credits
+                        </div>
+                        <div style="font-size: 14px; color: #374151;">
+                            These credits have been automatically added to your account.
+                        </div>
+                    </div>
+
+                    <p style="font-size: 14px; color: #374151; line-height: 1.6;">
+                        Keep up the excellent work! Your contributions make our community stronger.
+                    </p>
+                </div>
+
+                <div style="text-align: center; padding-top: 2rem; border-top: 1px solid #e5e7eb;">
+                    <a href="#" class="btn btn-primary" style="text-decoration: none; margin-bottom: 1rem;">
+                        View Your Spotlight
+                    </a>
+                    <p style="font-size: 12px; color: #9ca3af; margin-top: 1rem;">
+                        Daily Spotlight • Selected at 10:00 IST • [Date]
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <div style="font-weight: 500; margin-bottom: 0.25rem;">Action completed</div>
+        <div style="font-size: 14px; color: #6b7280;">Operation executed successfully</div>
+    </div>
+</body>
+</html>

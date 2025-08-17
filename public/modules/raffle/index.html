@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Raffle</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="./style.css" />
+  <script src="./script.js" defer></script>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Raffle</h1>
+
+    <form id="raffleForm" class="card">
+      <label>
+        <span>User ID</span>
+        <input id="userId" name="userId" placeholder="demo-user-1" required />
+      </label>
+
+      <label>
+        <span>Entries</span>
+        <input id="entries" name="entries" type="number" min="1" value="1" required />
+      </label>
+
+      <button class="btn" type="submit">Buy Entry</button>
+      <p class="hint">Stripe test will open in a new page after API is wired.</p>
+    </form>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  
+</body>
+</html>

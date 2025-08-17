@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Qualification Gate</title>
+  <link rel="stylesheet" href="./style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter&display=swap">
+  <script src="./script.js" defer></script>
+</head>
+<body>
+  <main class="container">
+    <h1 class="heading">Qualification Gate</h1>
+
+    <div class="button-group">
+      <button id="paidBtn" class="button">Paid Path</button>
+      <button id="freeBtn" class="button">Free Path</button>
+    </div>
+
+    <form id="paidForm" class="form hidden" aria-label="Paid Quiz Form">
+      <h2 class="subheading">3-Question Quiz</h2>
+
+      <label for="skill" aria-label="Skill question">What is 2 + 2?</label>
+      <input id="skill" type="text" class="input" required />
+
+      <label for="fun" aria-label="Fun question">What is your favorite hobby?</label>
+      <input id="fun" type="text" class="input" required />
+
+      <label for="feedback" aria-label="Feedback question">Any feedback for us?</label>
+      <textarea id="feedback" class="input" required></textarea>
+
+      <button type="submit" class="button submit">Submit Quiz</button>
+    </form>
+
+    <form id="freeForm" class="form hidden" aria-label="Free Qualification Form">
+      <h2 class="subheading">7-Question Form</h2>
+
+      <label for="name">Full Name</label>
+      <input id="name" type="text" class="input" required />
+
+      <label for="email">Email</label>
+      <input id="email" type="email" class="input" required />
+
+      <label for="phone">Phone Number</label>
+      <input id="phone" type="tel" class="input" required />
+
+      <label for="education">Education Level</label>
+      <input id="education" type="text" class="input" required />
+
+      <label for="experience">Years of Experience</label>
+      <input id="experience" type="number" class="input" required />
+
+      <label for="interest">Area of Interest</label>
+      <input id="interest" type="text" class="input" required />
+
+      <label for="goal">Career Goal</label>
+      <input id="goal" type="text" class="input" required />
+
+      <h3 class="subheading">Upload 3 Social Tag Screenshots</h3>
+      <input type="file" multiple accept="image/*" aria-label="Social tag screenshots" required />
+
+      <button type="submit" class="button submit">Submit Form</button>
+    </form>
+  </main>
+
+  <div id="toast" class="toast" role="alert" aria-live="assertive"></div>
+  <div id="tokenBox" class="token-box" aria-live="polite"></div>
+
+
+</body>
+</html>

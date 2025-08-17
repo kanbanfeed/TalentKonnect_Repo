@@ -162,7 +162,7 @@ const FeedModule = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50" style={{ backgroundColor: '#F1FAEE' }}>
+    <div className="min-h-screen bg-gray-50" style={{ backgroundColor: '#ffffff' }}>
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4">

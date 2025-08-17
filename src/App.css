@@ -1,41 +1,4 @@
-/* .App {
-  text-align: center;
-}
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-} */
 
 .app-container {
   min-height: 100vh;
@@ -81,15 +44,15 @@
 
 .app-layout {
   display: flex;
-  max-width: 1400px;
+  width:100vw;
   margin: 0 auto;
-  height: calc(100vh - 80px);
+
 }
 
 .sidebar {
   width: 280px;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 0 16px 16px 0;
+  background: #e3e3f5f2;
+  border-radius: 0 2px 2px 0;
   padding: 2rem 1rem;
   box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
@@ -146,8 +109,8 @@
 .main-content {
   flex: 1;
   background: white;
-  border-radius: 16px 0 0 16px;
-  margin: 1rem 1rem 1rem 0;
+  
+
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -236,4 +199,311 @@
   .module-header h2 {
     font-size: 1.25rem;
   }
+}
+/* smooth slide */
+.sidebar {
+  width: 260px;
+  transition: transform 0.25s ease;
+}
+
+/* iframe should fill remaining height without causing double scrollbars */
+.module-iframe {
+  width: 100%;
+  height: calc(100dvh - 140px); /* header + module header approx */
+  border: 0;
+}
+
+/* mobile: hide sidebar off-canvas; show when .open */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 64px;           /* header height */
+    left: 0;
+    bottom: 0;
+    background: #fff;
+    border-right: 1px solid #e5e7eb;
+    transform: translateX(-100%);
+    z-index: 40;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  /* push main content under header, full width */
+  .main-content {
+    padding: 16px;
+  }
+
+  /* keep the module header compact */
+  .module-header h2 { font-size: 18px; }
+  .module-header p  { font-size: 14px; }
+
+  /* show the menu button on mobile only */
+  .menu-btn {
+    appearance: none;
+    border: 1px solid #e5e7eb;
+    background: #2422ef;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 18px;
+    margin-left: auto;
+  }
+}
+
+/* desktop: hide menu button */
+@media (min-width: 769px) {
+  .menu-btn { display: none; }
+}
+
+
+
+
+:root{
+  --header-h: 72px;
+  --sidebar-w: 280px;
+  /* --sidebar-bg: #f8fafc;    */
+  /* --sidebar-border: #e5e7eb; */
+}
+
+
+html, body, #root { height: 100%; margin: 0; }
+
+
+.app-header { height: var(--header-h); display:flex; align-items:center; padding: 0 24px; border-bottom: 1px solid #e5e7eb; }
+
+.app-layout{
+  height: calc(100vh - var(--header-h));
+
+  grid-template-columns: var(--sidebar-w) 1fr;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar{
+  grid-column: 1;
+  margin: 0;               
+  padding: 16px;
+  border-right: 1px solid #e5e7eb;
+  overflow-y: auto;
+}
+
+
+.main-content{
+  grid-column: 2;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 0;             
+}
+
+.module-header{ padding: 20px 24px; border-bottom: 1px solid #f0f0f0; }
+
+.module-frame{ min-height: 0; }
+.module-iframe{
+  width: 100%;
+  height: 100%;          
+  display: block;
+  border: 0;
+}
+
+
+
+
+
+.no-scrollbar {
+  overflow: auto;                 
+  -webkit-overflow-scrolling: touch; 
+  -ms-overflow-style: none;      
+  scrollbar-width: none;          
+}
+.no-scrollbar::-webkit-scrollbar { 
+  display: none;
+}
+
+
+body{
+  background-color: #ffffff !important;
+}
+
+
+.header-content{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;   
+  gap: 16px;                
+}
+
+
+.app-header h1{
+  margin: 0;                
+  line-height: 1.2;
+}
+
+
+.logo{
+  display: inline-flex;
+  align-items: baseline;
+}
+.logo-konnect{ margin-left: 4px; }
+
+@media (max-width: 1024px) {
+    .main-content {
+        margin: 1rem ;
+        border-radius: 0px;
+    }
+}
+
+.form-container{
+  margin: auto;
+}
+
+.form-container {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 2px 2px 10px #0000000d;
+    margin:10px !important;
+    max-width: 500px;
+    padding: 2rem;
+}
+
+/* --------- base & variables --------- */
+:root{
+  --header-h: 72px;
+  --sidebar-w: 280px;
+  --sidebar-bg: #EEF2FF;          /* light sidebar */
+  --hairline: rgba(17,24,39,.08);
+}
+
+*{ box-sizing:border-box; }
+html, body, #root, .app-container{ height:100%; }
+body{ margin:0; background:#f3f4f6; overflow:hidden; } /* hide page scrollbars */
+
+/* --------- header --------- */
+.app-header{
+  position:sticky; top:0; z-index:50;
+  background: linear-gradient(90deg,#7586f1,#7765c7,#7a57b1);
+  color:#fff; height:var(--header-h);
+  display:grid; align-items:center;
+}
+.header-content{
+  display:grid; grid-template-columns: 1fr 1fr auto;
+  align-items:center; gap:12px; padding:0 24px;
+}
+.menu-toggle{
+  display:none; place-items:center; width:40px; height:40px;
+  border-radius:10px; cursor:pointer;
+  background:rgba(255,255,255,.15);
+  border:1px solid rgba(255,255,255,.25);
+}
+.header-content h1{
+  margin:0; line-height:1.1; text-align:center;
+  font-size:28px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.logo{ justify-self:end; font-weight:800; }
+
+/* --------- layout --------- */
+.app-layout{
+  display:grid; grid-template-columns: var(--sidebar-w) 1fr;
+  min-height: calc(100vh - var(--header-h));
+}
+
+/* sidebar */
+.sidebar{
+  position:sticky; top:var(--header-h);
+  height: calc(100vh - var(--header-h));
+  background: var(--sidebar-bg);
+  border-right:1px solid var(--hairline);
+  overflow:auto;
+  /* hide sidebar scrollbar but keep scrollable */
+  -ms-overflow-style:none; scrollbar-width:none;
+}
+.sidebar::-webkit-scrollbar{ width:0; height:0; }
+
+.nav-section{ padding:20px; }
+.nav-section h3{ margin:0 0 12px; color:#111827; }
+
+/* main panel */
+.main-content{ min-width:0; padding:0; display:flex; flex-direction:column; }
+.module-header{ padding:18px 24px; background:#fff; border-bottom:1px solid var(--hairline); }
+.module-frame{ flex:1 1 auto; height: calc(100vh - var(--header-h)); }
+.module-iframe{
+  width:100%; height:100%;
+  border:0; background:#fff; /* keeps dashboard visible edge-to-edge */
+}
+
+/* nav link (keeps your existing styles; only small tweaks) */
+.nav-link{ width:100%; display:flex; align-items:center; gap:12px; }
+.nav-icon{ font-size:20px; }
+.nav-text{ font-size:16px; }
+
+/* --------- responsive --------- */
+@media (max-width: 800px){
+  .app-layout{ grid-template-columns: 1fr; }
+  .menu-toggle{ display:grid; }
+  .sidebar{
+    position:fixed; left:0; top:var(--header-h);
+    width:82vw; max-width:320px; height: calc(100vh - var(--header-h));
+    transform: translateX(-100%); transition: transform .25s ease;
+    box-shadow: 0 10px 40px rgba(0,0,0,.18);
+  }
+  .header-content {
+    display: grid;
+    grid-template-columns: 40px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 0 24px;
+}
+  .sidebar.open{ transform: translateX(0); }
+
+  .header-content h1{ font-size: clamp(18px, 4vw, 22px); }
+  .logo{ font-size: 20px; }
+  .module-frame{ height: calc(100vh - var(--header-h)); }
+}
+
+@media (max-width: 480px){
+  :root{ --header-h: 64px; }
+  .header-content{ padding:0 12px; grid-template-columns:40px 1fr auto; }
+  .header-content h1{ font-size: 18px; }
+}
+
+/* optional: make the whole page background match header gradient */
+.app-container{ background: linear-gradient(180deg,#7586f1 0%, #7a57b1 100%); }
+@media (max-width: 1024px) {
+  /* remove any centering/max-width constraints on the content area */
+  .main-content,
+  .module-frame {
+    display: block;
+    grid-column: auto;
+    width: 100%;
+    max-width: none;
+    padding-left: 0;
+    padding-right: 0;
+    margin: 0   ;
+  }
+
+  /* header gets a little tighter on tablet */
+  .module-header {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  /* the iframe itself fills the row */
+  .module-iframe {
+    display: block;
+    width: 100%;
+    max-width: none;
+    border-radius: 0;                  /* edge-to-edge look */
+    height: calc(100dvh - 140px);      /* header + header border + small gap */
+  }
+}
+
+/* === Phone: same idea, slightly smaller header allowance === */
+@media (max-width: 768px) {
+  .module-iframe {
+    height: calc(100dvh - 120px);
+  }
+}
+
+@media (max-width: 1024px) {
+  .app-layout { padding-left: 0; padding-right: 0; }
 }

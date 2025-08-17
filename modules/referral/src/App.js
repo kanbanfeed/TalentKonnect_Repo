@@ -111,7 +111,7 @@ const ReferralModule = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50" style={{ backgroundColor: '#F1FAEE' }}>
+    <div className="min-h-screen bg-gray-50" style={{ backgroundColor: '#ffffff' }}>
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4">
@@ -251,7 +251,7 @@ const ReferralModule = () => {
 
                 {/* Referral Status */}
                 <div className="flex items-center justify-between p-4 rounded-lg"
-                     style={{ backgroundColor: '#F1FAEE' }}>
+                     style={{ backgroundColor: '#ffffff' }}>
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 rounded-full flex items-center justify-center"
                          style={{ backgroundColor: '#E76F51' }}>

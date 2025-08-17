@@ -3,25 +3,27 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "installCommand": "npm install",
+
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+    { "source": "/api/(.*)", "destination": "/api/$1" },          
+    { "source": "/(.*)", "destination": "/index.html" }           
   ],
+
   "headers": [
     {
       "source": "/assets/(.*)",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
     }
   ],
+
   "env": {
     "SKIP_PREFLIGHT_CHECK": "true",
     "DISABLE_ESLINT_PLUGIN": "true"
-  }
-} 
+  },
+
+  "crons": [
+    { "path": "/api/spotlight/run", "schedule": "30 4 * * *" }     
+  ]
+}
