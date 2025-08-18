@@ -7,7 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const toast    = document.getElementById("toast");
   const tokenBox = document.getElementById("tokenBox");
 
-  console.log('[QG] init', { paidBtn: !!paidBtn, freeBtn: !!freeBtn, paidForm: !!paidForm, freeForm: !!freeForm, toast: !!toast });
+  console.log('[QG] init', {
+    paidBtn: !!paidBtn, freeBtn: !!freeBtn, paidForm: !!paidForm, freeForm: !!freeForm, toast: !!toast
+  });
 
   // View switch
   if (paidBtn && freeBtn && paidForm && freeForm) {
@@ -30,22 +32,27 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => (toast.style.display = "none"), 3000);
   }
 
-  // Show ticket helper (also saves to localStorage)
+  // Token box updater
+  function updateTokenBox(token, tier) {
+    const box = document.getElementById('tokenBox');
+    if (!box) return;
+    box.innerHTML = `🔁 Existing ticket — <strong class="token">${token}</strong> (tier: ${tier || 'n/a'})`;
+    box.classList.add('show'); // ensure your CSS makes .show visible
+  }
+
+  // “Show ticket” + persist
   function showTicket(result) {
-    if (tokenBox) {
-      tokenBox.innerHTML = `Ticket created — <strong class="token">${result.token}</strong> (tier: ${result.tier})`;
-      tokenBox.classList.add("show");
-    }
+    if (!result) return;
     localStorage.setItem("qualificationToken", result.token);
     localStorage.setItem("qualificationTier", result.tier);
+    updateTokenBox(result.token, result.tier);
   }
 
   // Restore saved ticket (if any)
-  const savedToken = localStorage.getItem("qualificationToken");
-  const savedTier  = localStorage.getItem("qualificationTier");
-  if (savedToken && tokenBox) {
-    tokenBox.innerHTML = `🔁 Existing ticket — <strong class="token">${savedToken}</strong> (tier: ${savedTier || "n/a"})`;
-    tokenBox.classList.add("show");
+  {
+    const savedToken = localStorage.getItem("qualificationToken");
+    const savedTier  = localStorage.getItem("qualificationTier");
+    if (savedToken) updateTokenBox(savedToken, savedTier);
   }
 
   // Dev vs Prod API base
@@ -78,8 +85,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       try {
         const result = await submitQualification({ path: "paid", skill, fun, feedback });
-        showTicket(result);                           // <-- moved here
         showToast("Quiz submitted successfully");
+        showTicket(result);          // save + show token
         paidForm.reset();
       } catch (err) {
         console.error('[QG] submit (paid) error', err);
@@ -92,6 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (freeForm) {
     freeForm.addEventListener("submit", async (e) => {
       e.preventDefault();
+
       const required = Array.from(freeForm.querySelectorAll("input[required], textarea[required]"));
       if (!required.every(i => i.value.trim() !== "")) {
         showToast("Please complete all fields", true);
@@ -104,8 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
         for (const [k, v] of formData.entries()) data[k] = v;
 
         const result = await submitQualification(data);
-        showTicket(result);                           // <-- and here
         showToast("Form submitted successfully");
+        showTicket(result);          // save + show token
         freeForm.reset();
       } catch (err) {
         console.error('[QG] submit (free) error', err);
@@ -114,4 +122,3 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
-

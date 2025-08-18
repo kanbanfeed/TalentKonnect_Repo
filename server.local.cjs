@@ -82,6 +82,7 @@ app.post('/api/raffle/credit', (req, res) => {
 app.get('/api/raffle/tickets/:userId', (req, res) => {
   const db = readDb();
   const uid = String(req.params.userId || '').trim();
+  
   res.json({ userId: uid, tickets: db.tickets?.[uid] || 0 });
 });
 

@@ -11,17 +11,27 @@ const App: React.FC = () => {
 const currentUserId =
   (typeof window !== 'undefined' && (sessionStorage.getItem('raffle_userId') || localStorage.getItem('raffle_userId'))) ||
   'demo-user-1'; // fallback for demo
-
 async function refreshTickets() {
   try {
-    if (!currentUserId) return;
+    // ✅ Always resolve to a plain string
+    const el = document.getElementById('userId');
+    const fromInput = el && typeof el.value === 'string' ? el.value.trim() : '';
+
+    const uid =
+      fromInput ||
+      sessionStorage.getItem('raffle_userId') ||
+      localStorage.getItem('tk_userId') ||
+      (typeof currentUserId === 'string' ? currentUserId.trim() : '') ||
+      'demo-user-1';
+
     const API_BASE = location.hostname === 'localhost' ? 'http://localhost:3000' : '';
-    const r = await fetch(`${API_BASE}/api/raffle/tickets/${encodeURIComponent(currentUserId)}`);
+    const r = await fetch(`${API_BASE}/api/raffle/tickets/${encodeURIComponent(uid)}`);
     if (!r.ok) return;
     const data = await r.json();
     setTicketCount(Number(data?.tickets || 0));
   } catch {}
 }
+
 
 useEffect(() => {
   refreshTickets();
