@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const toast = document.getElementById('toast');
 
   // dev/prod base (UI 517x → API 3000 in dev)
-  const API_BASE = location.hostname === 'localhost' ? 'https://talentkonnect-liard.vercel.app' : '';
+  const API_BASE='https://talentkonnect-liard.vercel.app'
 
   function show(msg, ok=true){
     toast.textContent = msg;
