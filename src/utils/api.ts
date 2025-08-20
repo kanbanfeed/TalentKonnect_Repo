@@ -20,7 +20,7 @@ const withDelay = <T>(promise: Promise<T>, delay: number = 0): Promise<T> => {
   });
 };
 
-const api = {
+export const mockApi = {
   admin: {
     clusters: {
       get: (): Promise<ClusterItem[]> => withDelay(getAdminClustersMock(), 200),
@@ -49,4 +49,22 @@ const api = {
   },
 };
 
+
+export async function api(path: string, opts: RequestInit = {}) {
+  const base = typeof window !== 'undefined' ? window.location.origin : '';
+  const url = path.startsWith('http') ? path : `${base}${path}`;
+
+  const res = await fetch(url, {
+    headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) },
+    ...opts,
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    throw new Error(`${res.status} ${text || res.statusText}`);
+  }
+
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
+}
 export default api;

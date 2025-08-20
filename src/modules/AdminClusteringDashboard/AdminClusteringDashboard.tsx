@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Search, Filter, RefreshCw, CheckCircle, Clock, Users, Plus } from 'lucide-react';
-import api from '../../utils/api';
+import { api, mockApi } from '../../utils/api';
 import { ClusterItem } from '../../types';
 import ItemList from './components/ItemList';
 import BulkActions from './components/BulkActions';
@@ -27,7 +27,7 @@ const AdminClusteringDashboard: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await api.admin.clusters.get();
+      const data = await mockApi.admin.clusters.get();
       setClusterItems(data);
       setLastUpdated(new Date().toLocaleTimeString());
     } catch (err) {
@@ -67,7 +67,7 @@ const AdminClusteringDashboard: React.FC = () => {
 
   const handleItemUpdate = async (id: string, newTags: string[], newCategory: string) => {
     try {
-      await api.admin.clusters.update(id, newTags, newCategory);
+      await mockApi.admin.clusters.update(id, newTags, newCategory);
       setClusterItems(prevItems =>
         prevItems.map(item =>
           item.id === id 
@@ -85,7 +85,7 @@ const AdminClusteringDashboard: React.FC = () => {
 
   const handleCreateItem = async (itemData: CreateItemData) => {
     try {
-      const newItem = await api.admin.clusters.create(itemData);
+      const newItem = await mockApi.admin.clusters.create(itemData);
       setClusterItems(prevItems => [newItem, ...prevItems]);
       setLastUpdated(new Date().toLocaleTimeString());
     } catch (err) {
@@ -98,7 +98,7 @@ const AdminClusteringDashboard: React.FC = () => {
     if (selectedItems.length === 0) return;
     
     try {
-      await api.admin.clusters.bulkUpdate(selectedItems, { status: 'approved' });
+      await mockApi.admin.clusters.bulkUpdate(selectedItems, { status: 'approved' });
       setClusterItems(prevItems =>
         prevItems.map(item =>
           selectedItems.includes(item.id)
@@ -117,7 +117,7 @@ const AdminClusteringDashboard: React.FC = () => {
     if (selectedItems.length === 0) return;
     
     try {
-      await api.admin.clusters.bulkUpdate(selectedItems, { 
+      await mockApi.admin.clusters.bulkUpdate(selectedItems, { 
         currentCategory: newCategory, 
         status: 'reviewed' 
       });
