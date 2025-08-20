@@ -1,7 +1,6 @@
 // api/raffle/index.js
-// Single-file, no imports. Works in Vercel like /api/health did.
+// Single-file, no imports. Robust JSON body parsing for POST.
 
-// tiny in-memory store (persists while the lambda container stays warm)
 const g = globalThis;
 if (!g.__raffle) g.__raffle = { users: new Map(), version: 0 };
 const users = g.__raffle.users;
@@ -35,20 +34,39 @@ function totalTickets() {
   return leaderboard().reduce((sum, u) => sum + (u.tickets || 0), 0);
 }
 
-export default function handler(req, res) {
+// Fallback body reader (works even if req.body is empty)
+function readJson(req) {
+  return new Promise((resolve) => {
+    // If Vercel already parsed it, use it
+    if (req && typeof req.body !== 'undefined') {
+      try {
+        const parsed = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
+        return resolve(parsed);
+      } catch {
+        // fall through to stream parse
+      }
+    }
+    let data = '';
+    req.on('data', (chunk) => (data += chunk));
+    req.on('end', () => {
+      try { resolve(JSON.parse(data || '{}')); }
+      catch { resolve({}); }
+    });
+    req.on('error', () => resolve({}));
+  });
+}
+
+export default async function handler(req, res) {
   try {
     if (req.method === 'GET') {
       return res.status(200).json({
         totalTickets: totalTickets(),
-        leaderboard: leaderboard(), // [{id,name,tickets}, ...]
+        leaderboard: leaderboard(),
       });
     }
 
     if (req.method === 'POST') {
-      let body = {};
-      try { body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {}); }
-      catch { body = {}; }
-
+      const body = await readJson(req);
       const userId = String(body.userId || '').trim();
       const n = Number(body.addTickets ?? 1);
       const name = body.name ? String(body.name) : '';
