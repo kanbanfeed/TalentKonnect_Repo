@@ -13,16 +13,10 @@ const currentUserId =
   'demo-user-1'; // fallback for demo
 async function refreshTickets() {
   try {
-    // ✅ Always resolve to a plain string
-    const el = document.getElementById('userId');
-    const fromInput = el && typeof el.value === 'string' ? el.value.trim() : '';
-
-    const uid =
-      fromInput ||
-      sessionStorage.getItem('raffle_userId') ||
-      localStorage.getItem('tk_userId') ||
-      (typeof currentUserId === 'string' ? currentUserId.trim() : '') ||
-      'demo-user-1';
+    let uid = '';
+    if (typeof currentUserId === 'string' && currentUserId.trim()) uid = currentUserId.trim();
+    else if (currentUserId && typeof (currentUserId as any).value === 'string') uid = (currentUserId as any).value.trim();
+    if (!uid) uid = localStorage.getItem('tk_user_id') || 'demo-user-1';
 
     const API_BASE = location.hostname === 'localhost' ? 'http://localhost:3000' : '';
     const r = await fetch(`${API_BASE}/api/raffle/tickets/${encodeURIComponent(uid)}`);
