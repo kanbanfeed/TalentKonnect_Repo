@@ -7,24 +7,45 @@ const App: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [ticketCount, setTicketCount] = useState<number>(0);
 
-// read last used userId (set by raffle form / success page)
-const currentUserId =
-  (typeof window !== 'undefined' && (sessionStorage.getItem('raffle_userId') || localStorage.getItem('raffle_userId'))) ||
-  'demo-user-1'; // fallback for demo
+  function normalizeUserId(src: unknown): string {
+  if (typeof src === 'string') return src.trim();                      // plain string
+  if (src && typeof (src as any).value === 'string')                   // <input> / element with .value
+    return String((src as any).value).trim();
+  if (src && (src as any).target && typeof (src as any).target.value === 'string') // event.target.value
+    return String((src as any).target.value).trim();
+  return '';
+}
+
 async function refreshTickets() {
   try {
-    let uid = '';
-    if (typeof currentUserId === 'string' && currentUserId.trim()) uid = currentUserId.trim();
-    else if (currentUserId && typeof (currentUserId as any).value === 'string') uid = (currentUserId as any).value.trim();
+    let uid =
+      (typeof window !== 'undefined' &&
+        (sessionStorage.getItem('raffle_userId') ||
+         localStorage.getItem('raffle_userId'))) || '';
+
+    if (!uid) uid = normalizeUserId((window as any).currentUserId);
+
     if (!uid) uid = localStorage.getItem('tk_user_id') || 'demo-user-1';
 
-    const API_BASE = location.hostname === 'localhost' ? 'http://localhost:3000' : '';
-    const r = await fetch(`${API_BASE}/api/raffle/tickets/${encodeURIComponent(uid)}`);
-    if (!r.ok) return;
-    const data = await r.json();
+    uid = uid.trim();
+    if (!uid) return;
+
+    const res = await fetch(`/api/raffle/tickets/${encodeURIComponent(uid)}`, {
+      headers: { Accept: 'application/json' },
+    });
+
+    if (!res.ok) {
+      console.warn('[refreshTickets] fetch failed', res.status);
+      return;
+    }
+
+    const data = await res.json().catch(() => ({}));
     setTicketCount(Number(data?.tickets || 0));
-  } catch {}
+  } catch (e) {
+    console.warn('[refreshTickets] error', e);
+  }
 }
+
 
 
 useEffect(() => {
