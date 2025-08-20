@@ -4,4 +4,7 @@ module.exports = (req, res) => {
   } catch (e) {
     res.status(500).json({ error: 'health_failed', message: String(e && e.message || e) });
   }
+
+  
 };
+
