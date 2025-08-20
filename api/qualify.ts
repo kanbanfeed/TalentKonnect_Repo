@@ -1,9 +1,8 @@
-// api/qualify.ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 export const config = { runtime: 'nodejs' };
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
-
+  // --- CORS ---
   const origin = req.headers.origin ?? '';
   const allowOrigin = /^https?:\/\/localhost(:\d+)?$/.test(origin)
     ? origin
@@ -16,7 +15,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
 
   try {
-
+    // --- parse body safely ---
     const raw = (req as any).body;
     const body =
       raw && typeof raw === 'object' ? raw :
