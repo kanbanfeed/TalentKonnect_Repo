@@ -31,7 +31,7 @@ const refreshTickets = useCallback(async () => {
     if (!uid) return;
 
     // same-origin path (works on localhost + Vercel)
-    const res = await fetch(`https://talentkonnect-liard.vercel.app/api/raffle/tickets/${encodeURIComponent(uid)}`, {
+    const res = await fetch(`/api/raffle/tickets/${encodeURIComponent(uid)}`, {
       headers: { Accept: 'application/json' },
     });
     if (!res.ok) {
