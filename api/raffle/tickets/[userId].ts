@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getTickets } from '../../_store';
+import { getTickets } from '../../_store.ts';
+
 
 function normalizeUserId(q: unknown): string {
   // Vercel can provide string | string[]
