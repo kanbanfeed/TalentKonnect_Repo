@@ -35,12 +35,12 @@ var currentBracketCount = 47;
 var currentWinner = mockSubmissions[0];
 
 // Use Vercel API in dev, relative path in prod
-var API_BASE = location.hostname === "localhost" ? "http://localhost:3000" : "";
+var SITE_URL = location.hostname === "localhost" ? "http://localhost:3000" : "";
 
 // ---- API loader (fills currentWinner + next selection time) ----
 async function loadWinnerFromApi() {
   try {
-    var r = await fetch(`${API_BASE}/api/spotlight/current`);
+    var r = await fetch(`${SITE_URL}/api/spotlight/current`);
     if (!r.ok) throw new Error("HTTP " + r.status);
     var data = await r.json();
     var w = data.winner || {};
@@ -180,7 +180,7 @@ function showToast(message, type) {
 // ---- Buttons (global for inline onclick=) ----
 async function runSpotlightSelection() {
   try {
-    const res = await fetch(`${API_BASE}/api/spotlight/run`, { method: 'POST' });
+    const res = await fetch(`${SITE_URL}/api/spotlight/run`, { method: 'POST' });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     await reloadSpotlightFromApi();           // refresh UI from server result
     showToast('Spotlight selection completed successfully');
@@ -192,7 +192,7 @@ async function runSpotlightSelection() {
 
 // Refresh the winner card + “next selection” + email template from API
 async function reloadSpotlightFromApi() {
-  const r = await fetch(`${API_BASE}/api/spotlight/current`);
+  const r = await fetch(`${SITE_URL}/api/spotlight/current`);
   const data = await r.json();
   const w = data?.winner || {};
 
@@ -232,7 +232,7 @@ function updateEmailTemplate(winner) {
 
 
 function sendTestEmail() {
-  const url = API_BASE + '/api/spotlight/email'; // ✅ singular
+  const url = SITE_URL + '/api/spotlight/email'; // ✅ singular
   console.log('[email] POST', url);
   fetch(url, { method: 'POST' })
     .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })

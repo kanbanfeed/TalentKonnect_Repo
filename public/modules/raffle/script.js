@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const toast = document.getElementById('toast');
 
   // dev/prod base (UI 517x → API 3000 in dev)
-const API_BASE = location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+const SITE_URL = location.hostname === 'localhost' ? 'http://localhost:3000' : '';
   function show(msg, ok=true){
     toast.textContent = msg;
     toast.style.background = ok ? '#D1FAE5' : '#FEE2E2';
@@ -29,7 +29,7 @@ const API_BASE = location.hostname === 'localhost' ? 'http://localhost:3000' : '
   popup.document.write('<p style="font-family:Inter,system-ui">Opening Stripe Checkout…</p>');
 
   try {
-    const res = await fetch(`${API_BASE}/api/payments/create-checkout`, {
+    const res = await fetch(`${SITE_URL}/api/payments/create-checkout`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId, entries })

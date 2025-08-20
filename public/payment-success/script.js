@@ -1,10 +1,10 @@
-// const API_BASE = location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+// const SITE_URL = location.hostname === 'localhost' ? 'http://localhost:3000' : '';
 // (async function () {
 //   const userId  = sessionStorage.getItem('raffle_userId') || JSON.parse(localStorage.getItem('tk_pending_checkout')||'{}').userId || 'demo-user-1';
 //   const entries = Number(sessionStorage.getItem('raffle_entries') || JSON.parse(localStorage.getItem('tk_pending_checkout')||'{}').entries || 1);
 
 //   try {
-//     const r = await fetch(`${API_BASE}/api/raffle/credit`, {
+//     const r = await fetch(`${SITE_URL}/api/raffle/credit`, {
 //       method: 'POST',
 //       headers: { 'Content-Type': 'application/json' },
 //       body: JSON.stringify({ userId, entries })

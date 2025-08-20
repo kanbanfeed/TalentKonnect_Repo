@@ -34,7 +34,7 @@
     <script>
 
   // dev/prod base
-  const API_BASE = location.hostname === 'localhost' ? 'http://localhost:3000' : ' ';
+  const SITE_URL = location.hostname === 'localhost' ? 'http://localhost:3000' : ' ';
 
   // read Stripe session id (present only if using Checkout Sessions; not needed for Payment Links)
   const params = new URLSearchParams(location.search);
@@ -66,7 +66,7 @@
     confirmEl.textContent = 'Processing your payment…';
 
     // call local API to credit tickets
-    fetch(`${API_BASE}/api/raffle/credit`, {
+    fetch(`${SITE_URL}/api/raffle/credit`, {
       method: 'POST',
       headers: { 'Content-Type':'application/json' },
       body: JSON.stringify({ userId, entries })
