@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect,useCallback} from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import './App.css';
 
@@ -8,66 +8,63 @@ const App: React.FC = () => {
   const [ticketCount, setTicketCount] = useState<number>(0);
 
   function normalizeUserId(src: unknown): string {
-  if (typeof src === 'string') return src.trim();                      // plain string
-  if (src && typeof (src as any).value === 'string')                   // <input> / element with .value
-    return String((src as any).value).trim();
-  if (src && (src as any).target && typeof (src as any).target.value === 'string') // event.target.value
+  if (typeof src === 'string') return src.trim();
+  if (src && typeof (src as any).value === 'string') return String((src as any).value).trim();
+  if (src && (src as any).target && typeof (src as any).target.value === 'string')
     return String((src as any).target.value).trim();
   return '';
 }
-
-async function refreshTickets() {
+const refreshTickets = useCallback(async () => {
   try {
+    // prefer last known id set by success page / postMessage
     let uid =
       (typeof window !== 'undefined' &&
-        (sessionStorage.getItem('raffle_userId') ||
-         localStorage.getItem('raffle_userId'))) || '';
+        (sessionStorage.getItem('raffle_userId') || localStorage.getItem('raffle_userId'))) || '';
 
+    // fallback to whatever global currentUserId might be (string or element)
     if (!uid) uid = normalizeUserId((window as any).currentUserId);
 
+    // final fallback for demo
     if (!uid) uid = localStorage.getItem('tk_user_id') || 'demo-user-1';
 
     uid = uid.trim();
     if (!uid) return;
 
+    // same-origin path (works on localhost + Vercel)
     const res = await fetch(`/api/raffle/tickets/${encodeURIComponent(uid)}`, {
       headers: { Accept: 'application/json' },
     });
-
     if (!res.ok) {
       console.warn('[refreshTickets] fetch failed', res.status);
       return;
     }
-
     const data = await res.json().catch(() => ({}));
     setTicketCount(Number(data?.tickets || 0));
   } catch (e) {
     console.warn('[refreshTickets] error', e);
   }
-}
+}, []);
 
-
+useEffect(() => {
+  (window as any).refreshTickets = refreshTickets;
+  return () => { try { delete (window as any).refreshTickets; } catch {} };
+}, [refreshTickets]);
 
 useEffect(() => {
   refreshTickets();
-
-  // update when tab is focused again (e.g., after Stripe)
   const onFocus = () => refreshTickets();
   document.addEventListener('visibilitychange', onFocus);
   window.addEventListener('focus', onFocus);
-
-  // also check when storage changes (another tab/success page could write)
   const onStorage = (e: StorageEvent) => {
     if (e.key === 'tk_pending_checkout' || e.key === 'raffle_entries') refreshTickets();
   };
   window.addEventListener('storage', onStorage);
-
   return () => {
     document.removeEventListener('visibilitychange', onFocus);
     window.removeEventListener('focus', onFocus);
     window.removeEventListener('storage', onStorage);
   };
-}, []);
+}, [refreshTickets]);
 
   const modules = [
     { 
