@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const toast = document.getElementById('toast');
 
   // dev/prod base (UI 517x → API 3000 in dev)
-  const API_BASE = location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+  const API_BASE = location.hostname === 'localhost' ? 'https://talentkonnect-liard.vercel.app' : '';
 
   function show(msg, ok=true){
     toast.textContent = msg;
@@ -22,8 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // ✅ Pre-open a blank tab while we still have user activation.
-  // This avoids "no user activation" / sandbox nav errors after async/await.
   const popup = window.open();
   if (!popup) {
     show('Popup blocked. Please allow pop-ups for this site.', false);
