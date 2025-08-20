@@ -34,7 +34,7 @@
     <script>
 
   // dev/prod base
-  const API_BASE = location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+  const API_BASE = location.hostname === 'localhost' ? 'http://localhost:3000' : ' ';
 
   // read Stripe session id (present only if using Checkout Sessions; not needed for Payment Links)
   const params = new URLSearchParams(location.search);
