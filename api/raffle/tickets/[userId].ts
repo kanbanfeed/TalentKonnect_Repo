@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getTickets } from '../../_store.ts';
+import { getTickets } from '../../_store';
 
 
 function normalizeUserId(q: unknown): string {
