@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Dev vs Prod API base
-  const API_BASE = location.hostname === "localhost" ? "http://localhost:3000" : "";
+  const API_BASE='https://talentkonnect-liard.vercel.app'
 
   // API
   async function submitQualification(data) {
