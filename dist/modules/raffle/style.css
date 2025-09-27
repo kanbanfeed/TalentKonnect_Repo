@@ -1,0 +1,172 @@
+/* public/modules/raffle/style.css */
+
+/* ---------- Brand tokens ---------- */
+:root {
+  --ink: #111827;       /* Primary text */
+  --action: #2563EB;    /* Action / primary button */
+  --success: #10B981;   /* Success accents */
+  --warn: #F59E0B;      /* Warnings */
+  --error: #EF4444;     /* Errors */
+  --bg: #F8FAFC;        /* Page background */
+  --card: #FFFFFF;      /* Card background */
+  --border: #E5E7EB;    /* Card/input border */
+  --muted: #6B7280;     /* Secondary text */
+}
+
+/* ---------- Base ---------- */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---------- Layout ---------- */
+.wrap {
+  max-width: 720px;
+  margin: 32px auto;
+  padding: 0 16px;
+}
+
+h1 {
+  margin: 0 0 16px;
+  font-size: 28px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- Card ---------- */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  display: grid;
+  gap: 14px;
+}
+
+/* ---------- Form ---------- */
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+}
+
+label > span {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+input[type="text"],
+input[type="number"] {
+  appearance: none;
+  width: 100%;
+  font-size: 16px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] { -moz-appearance: textfield; }
+
+input:focus {
+  border-color: var(--action);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.20);
+}
+
+/* ---------- Button ---------- */
+.btn {
+  appearance: none;
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-weight: 600;
+  font-size: 15px;
+  color: #fff;
+  background: var(--action);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+  transition: transform 80ms ease, filter 120ms ease, box-shadow 120ms ease;
+}
+
+.btn:hover { filter: brightness(0.95); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ---------- Hint ---------- */
+.hint {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ---------- Toast ---------- */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translate(-50%, 12px) scale(0.98);
+  min-width: 260px;
+  max-width: calc(100% - 32px);
+  background: #D1FAE5;              /* JS will toggle bg to error color when needed */
+  border: 1px solid #A7F3D0;
+  color: #065F46;
+  padding: 12px 16px;
+  border-radius: 10px;
+  text-align: center;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.toast.show {
+  animation: toast-in 160ms ease-out forwards;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translate(-50%, 12px) scale(0.98); }
+  to   { opacity: 1; transform: translate(-50%, 0)     scale(1); }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .btn, .toast, input:focus {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* ---------- Utilities ---------- */
+.hidden { display: none !important; }
+
+/* ---------- Small screens ---------- */
+@media (max-width: 480px) {
+  .wrap { margin-top: 24px; }
+  .card { padding: 16px; border-radius: 10px; }
+  h1 { font-size: 24px; }
+}

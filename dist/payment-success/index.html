@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Payment Success</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Prevent search engines from indexing this utility page -->
+  <meta name="robots" content="noindex, nofollow" />
+  <style>
+    body{
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      background: #f8fafc;
+      color: #111827;
+      margin: 0;
+    }
+    .card{
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 560px;
+      width: min(560px, 92vw);
+      box-shadow: 0 8px 24px rgba(0,0,0,.06);
+    }
+    .ok{ color: #10B981; font-weight: 700; margin: 0 0 8px; }
+    .muted{ color:#6b7280; font-size: 14px; margin: 8px 0 0; }
+    .actions{ margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn{
+      appearance: none; border: 1px solid #e5e7eb; background: #fff;
+      padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 600;
+    }
+    .btn.primary{ background:#111827; color:#fff; border-color:#111827; }
+    .err{ color:#EF4444; font-weight:700; }
+  </style>
+</head>
+<body>
+  <div class="card" role="region" aria-live="polite" aria-busy="true">
+    <h1 class="ok">✅ Payment received</h1>
+    <p id="msg">Verifying your purchase…</p>
+    <div id="confirm" style="margin-top:1rem; font-weight:600;">Processing your payment…</div>
+
+    <div class="actions">
+      <button class="btn primary" id="backBtn">Back to Raffle</button>
+      <button class="btn" id="retryBtn" hidden>Retry credit</button>
+    </div>
+
+    <p class="muted">
+      Keep this tab open while we confirm your entries. You’ll also see your updated ticket count on the Raffle page.
+    </p>
+  </div>
+
+  <script>
+  // Where to call your API (same-origin in prod; localhost in dev isn't used here)
+  const SITE_URL = location.origin;
+
+  // Buttons
+  const backBtn  = document.getElementById('backBtn');
+  const retryBtn = document.getElementById('retryBtn');
+  backBtn.addEventListener('click', () => {
+    window.location.href = '/modules/raffle/index.html';
+  });
+
+  // Read Stripe session id (present if you used Checkout Sessions)
+  const params = new URLSearchParams(location.search);
+  const sid = params.get('session_id');
+
+  // DOM refs
+  const msg = document.getElementById('msg');
+  const confirmEl = document.getElementById('confirm');
+
+  // Recover stashed info (set before redirect in the Raffle form)
+  const pending = JSON.parse(localStorage.getItem('tk_pending_checkout') || '{}');
+  const userId  = pending.userId || sessionStorage.getItem('raffle_userId') || '';
+  const entries = Number(pending.entries || sessionStorage.getItem('raffle_entries') || 0);
+
+  msg.textContent = sid ? `Checkout session: ${sid}` : 'Verifying your purchase…';
+
+  async function creditTickets() {
+    try {
+      confirmEl.textContent = 'Processing your payment…';
+      const resp = await fetch(`${SITE_URL}/api/raffle/credit`, {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json' },
+        body: JSON.stringify({ userId, entries })
+      });
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok) throw new Error(data?.error || `HTTP ${resp.status}`);
+
+      confirmEl.textContent =
+        `✅ Payment confirmed — ${entries} raffle entr${entries>1?'ies':'y'} added. ` +
+        (data?.totalTickets != null ? `(Total: ${data.totalTickets})` : '');
+      document.querySelector('.card').setAttribute('aria-busy','false');
+
+      // Clear stash to avoid double credit on refresh
+      localStorage.removeItem('tk_pending_checkout');
+      sessionStorage.removeItem('raffle_userId');
+      sessionStorage.removeItem('raffle_entries');
+
+      retryBtn.hidden = true;
+    } catch (err) {
+      console.error('[payment-success] credit error', err);
+      confirmEl.innerHTML = '<span class="err">❗ Payment ok, but crediting failed.</span> ' +
+        'Please retry or contact support.';
+      retryBtn.hidden = false;
+    }
+  }
+
+  if (!userId || !entries) {
+    confirmEl.textContent =
+      'We could not find purchase details to credit (no user/entries found). ' +
+      'Please go back to the Raffle page and try again.';
+    retryBtn.hidden = true;
+    document.querySelector('.card').setAttribute('aria-busy','false');
+  } else {
+    creditTickets();
+    retryBtn.addEventListener('click', creditTickets);
+  }
+  </script>
+</body>
+</html>
