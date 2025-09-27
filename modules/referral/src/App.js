@@ -17,7 +17,7 @@ const ReferralModule = () => {
     
     // Generate unique link (in real app, this would come from backend)
     const userId = 'user123';
-    const link = `https://talentkonnect.com/invite/${userId}`;
+    const link = `https://www.talentkonnect.com/invite/${userId}`;
     
     setReferralLink(link);
   };

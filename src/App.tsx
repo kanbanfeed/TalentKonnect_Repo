@@ -30,10 +30,16 @@ const refreshTickets = useCallback(async () => {
     uid = uid.trim();
     if (!uid) return;
 
-    // same-origin path (works on localhost + Vercel)
-    const res = await fetch(`/api/raffle/tickets/${encodeURIComponent(uid)}`, {
+    // Determine the base URL for API based on environment
+    const baseURL = process.env.NODE_ENV === 'production'
+      ? 'https://talent-konnect-repo.vercel.app' // your production URL
+      : 'http://localhost:3000'; // your local development URL
+
+    // API call using the determined base URL
+    const res = await fetch(`${baseURL}/api/raffle/tickets/${encodeURIComponent(uid)}`, {
       headers: { Accept: 'application/json' },
     });
+
     if (!res.ok) {
       console.warn('[refreshTickets] fetch failed', res.status);
       return;
@@ -241,8 +247,8 @@ useEffect(() => {
       <span
         className="ml-auto inline-flex items-center justify-center rounded-md px-2 py-0.5 text-xs font-medium"
         style={{
-          backgroundColor: '#2563EB22',           // action color, faint
-          color: '#ffffff',                        // #2563EB
+          backgroundColor: '#2563EB22',           
+          color: '#ffffff',                      
           border: '1px solid #2563EB33',
           minWidth: 24
         }}
@@ -254,8 +260,7 @@ useEffect(() => {
     )}
   </button>
 ))}
-
-            </div>
+    </div>
           </nav>
            {sidebarOpen && <div className="sidebar-backdrop" onClick={() => setSidebarOpen(false)} />}
           <main className="main-content">

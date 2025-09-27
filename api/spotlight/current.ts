@@ -1,4 +1,3 @@
-// api/spotlight/current.ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import crypto from 'node:crypto';
 
@@ -41,7 +40,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   // CORS
   const origin = req.headers.origin || '';
   const isLocal = /^http:\/\/localhost(:\d+)?$/.test(origin);
-  const allowOrigin = isLocal ? origin : (process.env.CORS_ORIGIN || '*');
+  const allowOrigin = isLocal ? origin : (process.env.CORS_ORIGIN || process.env.SITE_URL || '*');
   res.setHeader('Access-Control-Allow-Origin', allowOrigin);
   res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');

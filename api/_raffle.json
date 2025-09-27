@@ -25711,15 +25711,57 @@
       "subject": "You're Today's Daily Spotlight Winner!",
       "body": "Congrats Alex Kumar! \"Advanced React Performance Optimization\" won with 847 points. 100 credits added.",
       "timestamp": "2025-08-17T04:29:59.972Z"
+    },
+    {
+      "to": "Alex Kumar",
+      "subject": "You're Today's Daily Spotlight Winner!",
+      "body": "Congrats Alex Kumar! \"Advanced React Performance Optimization\" won with 847 points. 100 credits added.",
+      "timestamp": "2025-09-25T15:06:17.565Z"
+    },
+    {
+      "to": "Alex Kumar",
+      "subject": "You're Today's Daily Spotlight Winner!",
+      "body": "Congrats Alex Kumar! \"Advanced React Performance Optimization\" won with 847 points. 100 credits added.",
+      "timestamp": "2025-09-26T08:12:27.885Z"
+    },
+    {
+      "to": "Alex Kumar",
+      "subject": "You're Today's Daily Spotlight Winner!",
+      "body": "Congrats Alex Kumar! \"Advanced React Performance Optimization\" won with 847 points. 100 credits added.",
+      "timestamp": "2025-09-27T11:03:07.819Z"
+    },
+    {
+      "to": "Alex Kumar",
+      "subject": "You're Today's Daily Spotlight Winner!",
+      "body": "Congrats Alex Kumar! \"Advanced React Performance Optimization\" won with 847 points. 100 credits added.",
+      "timestamp": "2025-09-27T13:50:55.761Z"
+    },
+    {
+      "to": "Alex Kumar",
+      "subject": "You're Today's Daily Spotlight Winner!",
+      "body": "Congrats Alex Kumar! \"Advanced React Performance Optimization\" won with 847 points. 100 credits added.",
+      "timestamp": "2025-09-27T13:51:00.180Z"
+    },
+    {
+      "to": "Alex Kumar",
+      "subject": "You're Today's Daily Spotlight Winner!",
+      "body": "Congrats Alex Kumar! \"Advanced React Performance Optimization\" won with 847 points. 100 credits added.",
+      "timestamp": "2025-09-27T13:51:00.926Z"
+    },
+    {
+      "to": "Alex Kumar",
+      "subject": "You're Today's Daily Spotlight Winner!",
+      "body": "Congrats Alex Kumar! \"Advanced React Performance Optimization\" won with 847 points. 100 credits added.",
+      "timestamp": "2025-09-27T13:51:01.795Z"
     }
   ],
   "credits": {
-    "u1": 2100
+    "u1": 2400
   },
   "submissions": [],
   "spotlight": {
-    "date": "2025-08-17",
-    "selectedAtUTC": "2025-08-17T04:29:59.972Z",
+    "date": "2025-09-27",
+    "selectedAtUTC": "2025-09-27T13:51:00.926Z",
     "creditsGranted": 100,
     "winner": {
       "id": "u1",
@@ -25728,19 +25770,43 @@
       "title": "Advanced React Performance Optimization",
       "submittedAt": "2025-08-14T03:00:00Z"
     },
-    "nextSelectionUTC": "2025-08-20T23:00:00.000Z",
+    "nextSelectionUTC": "2025-09-27T23:00:00.000Z",
     "credited": true
   },
   "users": {
     "u1": {
       "id": "u1",
-      "credits": 2100,
+      "credits": 2400,
       "raffleTickets": 0
     },
     "u3": {
       "id": "u3",
       "credits": 0,
       "raffleTickets": 0
+    }
+  },
+  "raffle": {
+    "history": [
+      {
+        "userId": "Appi",
+        "tickets": 50,
+        "selectedAtUTC": "2025-09-25T15:06:20.209Z"
+      },
+      {
+        "userId": "Appi",
+        "tickets": 50,
+        "selectedAtUTC": "2025-09-26T08:12:28.770Z"
+      },
+      {
+        "userId": "Appi",
+        "tickets": 50,
+        "selectedAtUTC": "2025-09-27T11:03:08.389Z"
+      }
+    ],
+    "lastWinner": {
+      "userId": "Appi",
+      "tickets": 50,
+      "selectedAtUTC": "2025-09-27T11:03:08.389Z"
     }
   }
 }
