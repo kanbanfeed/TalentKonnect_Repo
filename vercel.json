@@ -1,8 +1,9 @@
 {
-   "buildCommand": "npm run build",
+  "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
   "installCommand": "npm install",
+
   "rewrites": [
     { "source": "/((?!api|modules|payment-success).*)", "destination": "/index.html" }
   ],
@@ -22,6 +23,6 @@
   },
 
   "crons": [
-    { "path": "/api/spotlight/run", "schedule": "30 4 * * *" }     
+    { "path": "/api/spotlight/run", "schedule": "30 4 * * *" }
   ]
 }
