@@ -25801,12 +25801,15 @@
         "userId": "Appi",
         "tickets": 50,
         "selectedAtUTC": "2025-09-27T11:03:08.389Z"
+      },
+      {
+        "userId": "Appi",
+        "tickets": 50
       }
     ],
     "lastWinner": {
       "userId": "Appi",
-      "tickets": 50,
-      "selectedAtUTC": "2025-09-27T11:03:08.389Z"
+      "tickets": 50
     }
   }
 }

@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const entriesEl = document.getElementById('entries');
 
   // 🔗 Client-provided Stripe Payment Link (LIVE)
-  const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/8x200idP50Zy69Bh1n7Vm05';
+  const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/test_4gMeVf92uc8j4KMdUU1VK00';
 
   // Show a little toast
   function show(msg, ok = true) {
