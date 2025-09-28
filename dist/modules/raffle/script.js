@@ -3,9 +3,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const toast = document.getElementById('toast');
   const userEl = document.getElementById('userId');
   const entriesEl = document.getElementById('entries');
+  const ticketCountEl = document.getElementById('ticketCount');
 
-  // 🔗 Stripe Test Payment Link (you can replace later with LIVE)
-  const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/test_4gMeVf92uc8j4KMdUU1VK00';
+  // 🔗 Stripe Test Payment Link (can be replaced with LIVE later)
+  const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/8x200idP50Zy69Bh1n7Vm05';
 
   function show(msg, ok = true) {
     if (!toast) return;
@@ -19,12 +20,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const lastId = localStorage.getItem('raffle_last_userId');
   if (lastId && userEl) userEl.value = lastId;
 
-  // Handle redirected query params
+  // Handle query params for success/cancel
   const params = new URLSearchParams(location.search);
   if (params.get('canceled') === '1') show('Payment canceled. No tickets were added.', false);
   if (params.get('success') === '1') show('Payment successful! Tickets updated.');
 
-  // Refresh ticket count after success
+  // Refresh ticket count from API
   async function refreshTickets() {
     try {
       let uid = sessionStorage.getItem('raffle_userId') || localStorage.getItem('raffle_last_userId') || '';
@@ -33,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const res = await fetch(`${window.location.origin}/api/raffle/tickets/${encodeURIComponent(uid)}`);
       if (res.ok) {
         const data = await res.json();
-        const ticketCountEl = document.getElementById('ticketCount');
         if(ticketCountEl) ticketCountEl.textContent = data.tickets || 0;
       }
     } catch (e) {
@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     const userId  = (userEl?.value || '').trim();
     const entries = Number(entriesEl?.value || 1);
+
     if (!userId || !Number.isFinite(entries) || entries < 1) {
       show('Please enter a valid userId and entries (>= 1).', false);
       return;
@@ -61,11 +62,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     show('Redirecting to Stripe Checkout…');
 
-    // Open Stripe Checkout in new tab
+    // Open Stripe Checkout in a new tab
     window.open(STRIPE_PAYMENT_LINK, '_blank');
   });
 
-  // Optionally refresh tickets if another tab updates storage
+  // Refresh tickets if storage changes (other tab updates)
   window.addEventListener('storage', (e) => {
     if(e.key==='tk_pending_checkout' || e.key==='raffle_entries') refreshTickets();
   });
