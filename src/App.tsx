@@ -31,7 +31,7 @@ const refreshTickets = useCallback(async () => {
 
     // Determine the base URL for API based on environment
     const baseURL = process.env.NODE_ENV === 'production'
-      ? 'https://talentkonnect-liard.vercel.app/' // your production URL
+      ? 'https://www.talentkonnect.com/' // your production URL
       : 'http://localhost:3000'; // your local development URL
 
     // API call using the determined base URL

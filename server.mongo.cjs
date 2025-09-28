@@ -22,7 +22,23 @@ if (!MONGO_URI) {
 
 const stripe = STRIPE_SECRET_KEY ? new Stripe(STRIPE_SECRET_KEY, { timeout: 120000 }) : null;
 const PRICE_PER_ENTRY = 700; // cents
+const allowedOrigins = [
+  'https://talent-konnect-repo.vercel.app',
+  'https://www.talentkonnect.com',
+];
 
+app.use(cors({
+  origin: function(origin, callback) {
+    // allow requests with no origin (e.g., curl, mobile apps)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true // if you use cookies or authentication headers
+}));
 // ---------- MongoDB Setup ----------
 const client = new MongoClient(MONGO_URI);
 let db;
