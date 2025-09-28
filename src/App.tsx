@@ -1,7 +1,6 @@
 import React, { useState, useEffect,useCallback} from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import './App.css';
-
 const App: React.FC = () => {
   const [activeModule, setActiveModule] = useState('onboarding');
   const [sidebarOpen, setSidebarOpen] = useState(false);

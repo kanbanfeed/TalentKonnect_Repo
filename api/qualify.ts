@@ -7,7 +7,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
   const origin = req.headers.origin ?? '';
   const allowOrigin = /^https?:\/\/localhost(:\d+)?$/.test(origin)
     ? origin
-    : 'https://talentkonnect-liard.vercel.app';
+    : 'https://www.talentkonnect.com';
   res.setHeader('Access-Control-Allow-Origin', allowOrigin);
   res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');

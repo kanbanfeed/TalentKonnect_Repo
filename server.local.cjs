@@ -12,8 +12,11 @@ const PORT = process.env.PORT || 3000;
 // ---------- Helpers ----------
 const DB_FILE = path.join(process.cwd(), 'api', '_raffle.json');
 function readDb() {
-  try { return JSON.parse(fs.readFileSync(DB_FILE, 'utf-8')); }
-  catch { return { tickets:{}, payments:[], users:{}, credits:{}, submissions:[], raffle:{ history: [] }, spotlight:{}, emails:[] }; }
+  try {
+    return JSON.parse(fs.readFileSync(DB_FILE, 'utf-8'));
+  } catch {
+    return { tickets:{}, payments:[], users:{}, credits:{}, submissions:[], raffle:{ history: [] }, spotlight:{}, emails:[] };
+  }
 }
 function writeDb(data) {
   fs.mkdirSync(path.dirname(DB_FILE), { recursive:true });
@@ -62,11 +65,13 @@ function pickRaffleWinner(db){
   const winnerId = pool[idx];
   return { userId:winnerId, tickets: db.tickets[winnerId]||0 };
 }
+
 app.get('/api/raffle/tickets/:userId',(req,res)=>{
   const db = readDb();
   const uid = String(req.params.userId||'').trim();
   res.json({userId:uid, tickets: db.tickets?.[uid]||0});
 });
+
 app.post('/api/raffle/credit',(req,res)=>{
   const { userId, entries } = req.body||{};
   const uid = String(userId||'').trim();
@@ -79,10 +84,12 @@ app.post('/api/raffle/credit',(req,res)=>{
   writeDb(db);
   res.json({ok:true,userId:uid,entries:n,paymentId,totalTickets:db.tickets[uid]});
 });
+
 app.get('/api/raffle/winner',(_req,res)=>{
   const db = readDb();
   res.json({winner:db.raffle?.lastWinner||null,history:db.raffle?.history?.slice(-10)||[]});
 });
+
 app.all('/api/raffle/run',(_req,res)=>{
   const db = readDb();
   const win = pickRaffleWinner(db);
@@ -104,6 +111,7 @@ function pickSpotlightWinner(db){
   subs.sort((a,b)=> (b.points-a.points)||(new Date(a.submittedAt)-new Date(b.submittedAt))||String(a.id).localeCompare(String(b.id)));
   return subs[0];
 }
+
 function runSpotlightOnce(){
   const db = readDb();
   const winner = pickSpotlightWinner(db);
@@ -126,6 +134,7 @@ function runSpotlightOnce(){
   writeDb(db);
   return db.spotlight;
 }
+
 app.get('/api/spotlight/current',(_req,res)=>res.json(runSpotlightOnce()));
 app.post('/api/spotlight/run',(_req,res)=>res.json({ok:true,...runSpotlightOnce()}));
 app.get('/api/spotlight/emails',(_req,res)=>res.json({emails:(readDb().emails||[]).slice(-10).reverse()}));
