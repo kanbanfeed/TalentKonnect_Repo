@@ -5,7 +5,7 @@ const App: React.FC = () => {
   const [activeModule, setActiveModule] = useState('onboarding');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [ticketCount, setTicketCount] = useState<number>(0);
-
+  
   function normalizeUserId(src: unknown): string {
   if (typeof src === 'string') return src.trim();
   if (src && typeof (src as any).value === 'string') return String((src as any).value).trim();
@@ -31,7 +31,7 @@ const refreshTickets = useCallback(async () => {
 
     // Determine the base URL for API based on environment
     const baseURL = process.env.NODE_ENV === 'production'
-      ? 'https://www.talentkonnect.com/' // your production URL
+      ? 'https://www.talentkonnect.com' // your production URL
       : 'http://localhost:3000'; // your local development URL
 
     // API call using the determined base URL
@@ -143,35 +143,29 @@ useEffect(() => {
       description: 'Analytics & reporting'
     },
     {
-  name: 'Qualification Gate',
-  key: 'qualification',
-  icon: '🧪',
-  url: '/modules/qualification-gate/index.html',
-  description: 'Qualification quiz (paid/free) with validation'
-},
-{
-  name: 'Daily Spotlight',
-  key: 'spotlight',
-  icon: '🌟',
-  url: '/modules/daily-spotlight/index.html',
-  description: 'Daily winner dashboard (04:30 IST)'
-},
-{
-  name: 'Raffle',
-  key: 'raffle',
-  icon: '🎟️',
-  url: '/modules/raffle/index.html',
-  description: 'Buy raffle entries (Stripe test mode)'
-}
-
+      name: 'Qualification Gate',
+      key: 'qualification',
+      icon: '🧪',
+      url: '/modules/qualification-gate/index.html',
+      description: 'Qualification quiz (paid/free) with validation'
+    },
+    {
+      name: 'Daily Spotlight',
+      key: 'spotlight',
+      icon: '🌟',
+      url: '/modules/daily-spotlight/index.html',
+      description: 'Daily winner dashboard (04:30 IST)'
+    },
+    {
+      name: 'Raffle',
+      key: 'raffle',
+      icon: '🎟️',
+      url: '/modules/raffle/index.html',
+      description: 'Buy raffle entries (Stripe test mode)'
+    }
   ];
 
   const currentModule = modules.find(m => m.key === activeModule);
-
-
-
-  // ... your component code
-
   useEffect(() => {
     // ⬅️ Paste your actual Stripe Payment Link (test mode) here
     const PAYMENT_LINK = 'https://buy.stripe.com/test_4gMeVf92uc8j4KMdUU1VK00';
@@ -191,19 +185,13 @@ useEffect(() => {
             ts: Date.now(),
           })
         );
-
         // top-level navigation to Payment Link (no popup)
         window.location.assign(PAYMENT_LINK);
       }
     };
-
     window.addEventListener('message', onMsg);
     return () => window.removeEventListener('message', onMsg);
   }, []);
-
-
-
-
   return (
     <Router>
       <div className="app-container">
