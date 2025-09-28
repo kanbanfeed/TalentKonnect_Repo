@@ -1,4 +1,3 @@
-// public/modules/qualification-gate/script.js
 document.addEventListener('DOMContentLoaded', () => {
   const paidBtn  = document.getElementById("paidBtn");
   const freeBtn  = document.getElementById("freeBtn");
@@ -37,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const box = document.getElementById('tokenBox');
     if (!box) return;
     box.innerHTML = `🔁 Existing ticket — <strong class="token">${token}</strong> (tier: ${tier || 'n/a'})`;
-    box.classList.add('show'); // ensure your CSS makes .show visible
+    box.classList.add('show'); 
   }
 
   // “Show ticket” + persist
@@ -55,8 +54,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (savedToken) updateTokenBox(savedToken, savedTier);
   }
 
-  // Dev vs Prod API base
-const SITE_URL = location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+  // Dev vs Prod API base (automatically detects current domain)
+  const SITE_URL = location.origin; // localhost or production automatically
+
   // API
   async function submitQualification(data) {
     const resp = await fetch(`${SITE_URL}/api/qualify`, {
@@ -85,7 +85,7 @@ const SITE_URL = location.hostname === 'localhost' ? 'http://localhost:3000' : '
       try {
         const result = await submitQualification({ path: "paid", skill, fun, feedback });
         showToast("Quiz submitted successfully");
-        showTicket(result);          // save + show token
+        showTicket(result);         
         paidForm.reset();
       } catch (err) {
         console.error('[QG] submit (paid) error', err);
@@ -112,7 +112,7 @@ const SITE_URL = location.hostname === 'localhost' ? 'http://localhost:3000' : '
 
         const result = await submitQualification(data);
         showToast("Form submitted successfully");
-        showTicket(result);          // save + show token
+        showTicket(result);          
         freeForm.reset();
       } catch (err) {
         console.error('[QG] submit (free) error', err);
