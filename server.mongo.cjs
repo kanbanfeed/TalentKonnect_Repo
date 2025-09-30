@@ -8,21 +8,21 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ---------- Env ----------
+// ---------- Environment Variables ----------
 const SITE_URL = process.env.SITE_URL || 'http://localhost:3000';
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || '';
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
 const MONGO_URI = process.env.MONGO_URI;
-const PRICE_PER_ENTRY = 700;
+const PRICE_PER_ENTRY = 700; // cents
 
 if (!MONGO_URI) {
-  console.error('MONGO_URI not set in .env');
+  console.error('❌ MONGO_URI not set in .env');
   process.exit(1);
 }
 
 const stripe = STRIPE_SECRET_KEY ? new Stripe(STRIPE_SECRET_KEY, { timeout: 120000 }) : null;
 
-// ---------- MongoDB ----------
+// ---------- MongoDB Setup ----------
 const client = new MongoClient(MONGO_URI);
 let db;
 
@@ -32,16 +32,15 @@ async function connectDb() {
     db = client.db('talentkonnect');
     console.log('✅ Connected to MongoDB');
   } catch (err) {
-    console.error('Failed to connect MongoDB:', err);
+    console.error('❌ Failed to connect MongoDB:', err);
     process.exit(1);
   }
 }
 
 // ---------- Middleware ----------
 const allowedOrigins = [
-  'https://www.talentkonnect.com',
-  'https://talent-konnect-repo.vercel.app',
-  undefined,
+  'https://www.talentkonnect.com',          // live// staging
+  undefined,                                 // curl / mobile apps
 ];
 
 app.use(cors({
@@ -53,6 +52,7 @@ app.use(cors({
   credentials: true
 }));
 
+// ---------- Body Parsing ----------
 app.use(express.json());
 
 // ---------- Health ----------
@@ -66,8 +66,13 @@ app.post('/api/qualify', async (req, res) => {
     if (!userPath) return res.status(400).json({ error: 'Path is required' });
     if (userPath === 'paid' && (!skill || !fun || !feedback)) return res.status(400).json({ error: 'All quiz fields required' });
 
-    const token = `ticket_${Math.random().toString(36).slice(2, 10)}`;
-    await db.collection('qualifications').insertOne({ token, tier: userPath === 'paid' ? 'paid' : 'free', createdAt: new Date() });
+    const token = `ticket_${Math.random().toString(36).slice(2,10)}`;
+    await db.collection('qualifications').insertOne({
+      token,
+      tier: userPath === 'paid' ? 'paid' : 'free',
+      createdAt: new Date()
+    });
+
     res.json({ message: 'Qualification submitted', token, tier: userPath === 'paid' ? 'paid' : 'free' });
   } catch (err) {
     console.error('/api/qualify error:', err);
@@ -75,7 +80,7 @@ app.post('/api/qualify', async (req, res) => {
   }
 });
 
-// ---------- Raffle ----------
+// ---------- Raffle Tickets ----------
 app.get('/api/raffle/tickets/:userId', async (req, res) => {
   try {
     if (!db) return res.status(503).json({ error: 'DB not ready' });
@@ -96,8 +101,16 @@ app.post('/api/raffle/credit', async (req, res) => {
 
     const ticketDoc = await db.collection('tickets').findOne({ userId }) || { userId, tickets: 0 };
     const newTickets = (ticketDoc.tickets || 0) + Number(entries);
+
     await db.collection('tickets').updateOne({ userId }, { $set: { tickets: newTickets } }, { upsert: true });
-    await db.collection('payments').insertOne({ paymentId: `pay_${Math.random().toString(36).slice(2,10)}`, userId, entries, amount: entries*PRICE_PER_ENTRY, timestamp: new Date(), source:'manual' });
+    await db.collection('payments').insertOne({
+      paymentId: `pay_${Math.random().toString(36).slice(2,10)}`,
+      userId,
+      entries,
+      amount: entries * PRICE_PER_ENTRY,
+      timestamp: new Date(),
+      source: 'manual'
+    });
 
     res.json({ ok: true, userId, entries, totalTickets: newTickets });
   } catch (err) {
@@ -118,9 +131,12 @@ app.post('/api/payment/create-checkout', async (req, res) => {
       payment_method_types:['card'],
       success_url:`${SITE_URL}/payment-success/index.html?session_id={CHECKOUT_SESSION_ID}&success=1`,
       cancel_url:`${SITE_URL}/modules/raffle/?canceled=1`,
-      line_items:[{price_data:{currency:'usd',product_data:{name:'Raffle Entry'},unit_amount:PRICE_PER_ENTRY},quantity:entries}],
-      metadata:{userId,entriesPurchased:String(entries)},
+      line_items:[
+        { price_data: { currency:'usd', product_data:{name:'Raffle Entry'}, unit_amount:PRICE_PER_ENTRY }, quantity:entries }
+      ],
+      metadata:{ userId, entriesPurchased: String(entries) }
     });
+
     res.json({ url: session.url });
   } catch (err) {
     console.error('/api/payment/create-checkout error:', err);
@@ -151,8 +167,15 @@ app.post('/api/stripe/webhook', express.raw({ type:'application/json' }), async 
 
       if (userId && entries > 0) {
         const ticketDoc = await db.collection('tickets').findOne({ userId }) || { userId, tickets: 0 };
-        await db.collection('tickets').updateOne({ userId }, { $set: { tickets: (ticketDoc.tickets || 0)+entries } }, { upsert:true });
-        await db.collection('payments').insertOne({ paymentId:`pay_${Math.random().toString(36).slice(2,10)}`, userId, entries, amount:total, timestamp:new Date(), source:'stripe' });
+        await db.collection('tickets').updateOne({ userId }, { $set: { tickets: (ticketDoc.tickets || 0) + entries } }, { upsert:true });
+        await db.collection('payments').insertOne({
+          paymentId:`pay_${Math.random().toString(36).slice(2,10)}`,
+          userId,
+          entries,
+          amount: total,
+          timestamp: new Date(),
+          source:'stripe'
+        });
       }
     }
 
@@ -176,7 +199,7 @@ app.get('/api/users/:id', async (req, res) => {
   }
 });
 
-// ---------- Start ----------
+// ---------- Start Server ----------
 connectDb().then(()=> {
   app.listen(PORT, ()=>console.log(`✅ Production API running at ${SITE_URL} on port ${PORT}`));
 }).catch(err=>{

@@ -4,9 +4,10 @@
   "framework": "vite",
   "installCommand": "npm install",
 
-  "rewrites": [
-    { "source": "/((?!api/stripe/webhook|api|modules|payment-success).*)", "destination": "/index.html" }
-  ],
+ "rewrites": [
+  { "source": "/((?!api|modules|payment-success).*)", "destination": "/index.html" }
+],
+
 
   "headers": [
     {
