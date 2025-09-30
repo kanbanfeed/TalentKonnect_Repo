@@ -1,4 +1,4 @@
-// server.mongo.cjs — Production-ready API with MongoDB
+// server.mongo.cjs — Production-ready API with MongoDB & Stripe
 const express = require('express');
 const cors = require('cors');
 const Stripe = require('stripe');
@@ -8,21 +8,21 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ---------- Environment Variables ----------
+// ---------- Env ----------
 const SITE_URL = process.env.SITE_URL || 'http://localhost:3000';
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || '';
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
 const MONGO_URI = process.env.MONGO_URI;
-const PRICE_PER_ENTRY = 700; // cents
+const PRICE_PER_ENTRY = 700;
 
 if (!MONGO_URI) {
-  console.error('Error: MONGO_URI not set in .env');
+  console.error('MONGO_URI not set in .env');
   process.exit(1);
 }
 
 const stripe = STRIPE_SECRET_KEY ? new Stripe(STRIPE_SECRET_KEY, { timeout: 120000 }) : null;
 
-// ---------- MongoDB Setup ----------
+// ---------- MongoDB ----------
 const client = new MongoClient(MONGO_URI);
 let db;
 
@@ -32,54 +32,42 @@ async function connectDb() {
     db = client.db('talentkonnect');
     console.log('✅ Connected to MongoDB');
   } catch (err) {
-    console.error('❌ Failed to connect to MongoDB:', err);
+    console.error('Failed to connect MongoDB:', err);
     process.exit(1);
   }
 }
 
 // ---------- Middleware ----------
 const allowedOrigins = [
-  'https://www.talentkonnect.com',               // live domain
-  'https://talent-konnect-repo.vercel.app',     // staging
-  undefined,                                    // curl, mobile apps
+  'https://www.talentkonnect.com',
+  'https://talent-konnect-repo.vercel.app',
+  undefined,
 ];
 
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
-    if (!allowedOrigins.includes(origin)) {
-      return callback(new Error('CORS policy does not allow access from this origin.'), false);
-    }
+    if (!allowedOrigins.includes(origin)) return callback(new Error('CORS blocked'), false);
     return callback(null, true);
   },
   credentials: true
 }));
 
-// ---------- Webhook must come BEFORE express.json() ----------
-app.use('/api/stripe/webhook', express.raw({ type: 'application/json' }));
-
-// All other JSON routes
 app.use(express.json());
 
 // ---------- Health ----------
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
 
-// ---------- Qualification Gate ----------
+// ---------- Qualification ----------
 app.post('/api/qualify', async (req, res) => {
   try {
     if (!db) return res.status(503).json({ error: 'DB not ready' });
     const { path: userPath, skill, fun, feedback } = req.body || {};
     if (!userPath) return res.status(400).json({ error: 'Path is required' });
-    if (userPath === 'paid' && (!skill || !fun || !feedback))
-      return res.status(400).json({ error: 'All quiz fields required' });
+    if (userPath === 'paid' && (!skill || !fun || !feedback)) return res.status(400).json({ error: 'All quiz fields required' });
 
     const token = `ticket_${Math.random().toString(36).slice(2, 10)}`;
-    await db.collection('qualifications').insertOne({
-      token,
-      tier: userPath === 'paid' ? 'paid' : 'free',
-      createdAt: new Date(),
-    });
-
+    await db.collection('qualifications').insertOne({ token, tier: userPath === 'paid' ? 'paid' : 'free', createdAt: new Date() });
     res.json({ message: 'Qualification submitted', token, tier: userPath === 'paid' ? 'paid' : 'free' });
   } catch (err) {
     console.error('/api/qualify error:', err);
@@ -87,7 +75,7 @@ app.post('/api/qualify', async (req, res) => {
   }
 });
 
-// ---------- Raffle Tickets ----------
+// ---------- Raffle ----------
 app.get('/api/raffle/tickets/:userId', async (req, res) => {
   try {
     if (!db) return res.status(503).json({ error: 'DB not ready' });
@@ -95,7 +83,7 @@ app.get('/api/raffle/tickets/:userId', async (req, res) => {
     const ticketDoc = await db.collection('tickets').findOne({ userId: uid }) || { userId: uid, tickets: 0 };
     res.json({ userId: uid, tickets: ticketDoc.tickets });
   } catch (err) {
-    console.error('/api/raffle/tickets/:userId error:', err);
+    console.error('/api/raffle/tickets error:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -108,16 +96,8 @@ app.post('/api/raffle/credit', async (req, res) => {
 
     const ticketDoc = await db.collection('tickets').findOne({ userId }) || { userId, tickets: 0 };
     const newTickets = (ticketDoc.tickets || 0) + Number(entries);
-
     await db.collection('tickets').updateOne({ userId }, { $set: { tickets: newTickets } }, { upsert: true });
-    await db.collection('payments').insertOne({
-      paymentId: `pay_${Math.random().toString(36).slice(2, 10)}`,
-      userId,
-      entries,
-      amount: entries * PRICE_PER_ENTRY,
-      timestamp: new Date(),
-      source: 'manual',
-    });
+    await db.collection('payments').insertOne({ paymentId: `pay_${Math.random().toString(36).slice(2,10)}`, userId, entries, amount: entries*PRICE_PER_ENTRY, timestamp: new Date(), source:'manual' });
 
     res.json({ ok: true, userId, entries, totalTickets: newTickets });
   } catch (err) {
@@ -134,16 +114,13 @@ app.post('/api/payment/create-checkout', async (req, res) => {
     if (!userId || entries < 1) return res.status(400).json({ error: 'userId and entries required' });
 
     const session = await stripe.checkout.sessions.create({
-      mode: 'payment',
-      payment_method_types: ['card'],
-      success_url: `${SITE_URL}/payment-success/index.html?session_id={CHECKOUT_SESSION_ID}&success=1`,
-      cancel_url: `${SITE_URL}/modules/raffle/?canceled=1`,
-      line_items: [
-        { price_data: { currency: 'usd', product_data: { name: 'Raffle Entry' }, unit_amount: PRICE_PER_ENTRY }, quantity: entries }
-      ],
-      metadata: { userId, entriesPurchased: String(entries) },
+      mode:'payment',
+      payment_method_types:['card'],
+      success_url:`${SITE_URL}/payment-success/index.html?session_id={CHECKOUT_SESSION_ID}&success=1`,
+      cancel_url:`${SITE_URL}/modules/raffle/?canceled=1`,
+      line_items:[{price_data:{currency:'usd',product_data:{name:'Raffle Entry'},unit_amount:PRICE_PER_ENTRY},quantity:entries}],
+      metadata:{userId,entriesPurchased:String(entries)},
     });
-
     res.json({ url: session.url });
   } catch (err) {
     console.error('/api/payment/create-checkout error:', err);
@@ -152,7 +129,7 @@ app.post('/api/payment/create-checkout', async (req, res) => {
 });
 
 // ---------- Stripe Webhook ----------
-app.post('/api/stripe/webhook', async (req, res) => {
+app.post('/api/stripe/webhook', express.raw({ type:'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
   try {
     if (!stripe) return res.status(501).json({ error: 'Stripe not configured' });
@@ -170,46 +147,39 @@ app.post('/api/stripe/webhook', async (req, res) => {
       const session = event.data.object;
       const userId = session.metadata?.userId || '';
       const total = Number(session.amount_total || 0);
-      const entries = total ? Math.max(1, Math.round(total / PRICE_PER_ENTRY)) : 1;
+      const entries = total ? Math.max(1, Math.round(total/PRICE_PER_ENTRY)) : 1;
 
       if (userId && entries > 0) {
         const ticketDoc = await db.collection('tickets').findOne({ userId }) || { userId, tickets: 0 };
-        await db.collection('tickets').updateOne({ userId }, { $set: { tickets: (ticketDoc.tickets || 0) + entries } }, { upsert: true });
-        await db.collection('payments').insertOne({
-          paymentId: `pay_${Math.random().toString(36).slice(2, 10)}`,
-          userId,
-          entries,
-          amount: total,
-          timestamp: new Date(),
-          source: 'stripe',
-        });
+        await db.collection('tickets').updateOne({ userId }, { $set: { tickets: (ticketDoc.tickets || 0)+entries } }, { upsert:true });
+        await db.collection('payments').insertOne({ paymentId:`pay_${Math.random().toString(36).slice(2,10)}`, userId, entries, amount:total, timestamp:new Date(), source:'stripe' });
       }
     }
 
-    res.status(200).json({ received: true });
+    res.status(200).json({ received:true });
   } catch (err) {
     console.error('[stripe/webhook]', err);
-    res.status(400).json({ error: 'Webhook error', message: err.message || String(err) });
+    res.status(400).json({ error:'Webhook error', message:err.message||String(err) });
   }
 });
 
 // ---------- Users ----------
 app.get('/api/users/:id', async (req, res) => {
   try {
-    if (!db) return res.status(503).json({ error: 'DB not ready' });
+    if (!db) return res.status(503).json({ error:'DB not ready' });
     const id = req.params.id.trim();
-    const user = await db.collection('tickets').findOne({ userId: id }) || { userId: id, tickets: 0 };
+    const user = await db.collection('tickets').findOne({ userId:id }) || { userId:id, tickets:0 };
     res.json(user);
   } catch (err) {
     console.error('/api/users/:id error:', err);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error:'Internal server error' });
   }
 });
 
-// ---------- Start Server ----------
-connectDb().then(() => {
-  app.listen(PORT, () => console.log(`✅ Production API running at ${SITE_URL} on port ${PORT}`));
-}).catch(err => {
+// ---------- Start ----------
+connectDb().then(()=> {
+  app.listen(PORT, ()=>console.log(`✅ Production API running at ${SITE_URL} on port ${PORT}`));
+}).catch(err=>{
   console.error('Failed to start server:', err);
   process.exit(1);
 });
