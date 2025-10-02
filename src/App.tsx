@@ -158,10 +158,10 @@ useEffect(() => {
     },
     {
       name: 'Talent Credit',
-      key: 'raffle',
+      key: 'talent-credit',
       icon: '🎟️',
       url: '/modules/raffle/index.html',
-      description: 'Buy raffle entries (Stripe test mode)'
+      description: 'All rewards are earned through skill, merit, and active participation — no element of chance or lottery is involved'
     }
   ];
 
