@@ -157,7 +157,7 @@ useEffect(() => {
       description: 'Daily winner dashboard (04:30 IST)'
     },
     {
-      name: 'Raffle',
+      name: 'Talent Credit',
       key: 'raffle',
       icon: '🎟️',
       url: '/modules/raffle/index.html',
