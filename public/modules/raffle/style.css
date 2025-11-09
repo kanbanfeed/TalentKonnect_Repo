@@ -69,7 +69,8 @@ label > span {
 }
 
 input[type="text"],
-input[type="number"] {
+input[type="number"],
+input[type="email"] {
   appearance: none;
   width: 100%;
   font-size: 16px;
