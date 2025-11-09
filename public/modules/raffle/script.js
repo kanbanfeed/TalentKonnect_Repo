@@ -1,73 +1,85 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const form  = document.getElementById('raffleForm');
-  const toast = document.getElementById('toast');
-  const userEl = document.getElementById('userId');
-  const entriesEl = document.getElementById('entries');
-  const ticketCountEl = document.getElementById('ticketCount');
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("paymentForm");
+  const toast = document.getElementById("toast");
+  const emailEl = document.getElementById("email");
+  const entriesEl = document.getElementById("entries");
 
-  // 🔗 Stripe Test Payment Link (can be replaced with LIVE later)
-  const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/8x200idP50Zy69Bh1n7Vm05';
+  // ✅ Crowbar backend endpoints
+  const CROWBAR_BASE = "https://api.crowbarltd.com/api/stripe";
+  const BRIDGE_TOKEN =
+    "KCiwGXQETMGsSX6z6XdhrYnU0Jx3RU2AKAL3RHYbFFw2lFYaPDZHylI0GVwqlmewaeqTNpyGWj5mBxE3voMqszztBrdznDOyp6DR";
 
   function show(msg, ok = true) {
     if (!toast) return;
     toast.textContent = msg;
-    toast.style.background = ok ? '#D1FAE5' : '#FEE2E2';
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2500);
+    toast.style.background = ok ? "#D1FAE5" : "#FEE2E2";
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 2500);
   }
 
-  // Pre-fill userId if stored
-  const lastId = localStorage.getItem('raffle_last_userId');
-  if (lastId && userEl) userEl.value = lastId;
-
-  // Handle query params for success/cancel
-  const params = new URLSearchParams(location.search);
-  if (params.get('canceled') === '1') show('Payment canceled. No tickets were added.', false);
-  if (params.get('success') === '1') show('Payment successful! Tickets updated.');
-
-  // Refresh ticket count from API
-  async function refreshTickets() {
-    try {
-      let uid = sessionStorage.getItem('raffle_userId') || localStorage.getItem('raffle_last_userId') || '';
-      uid = uid.trim();
-      if (!uid) return;
-      const res = await fetch(`${window.location.origin}/api/raffle/tickets/${encodeURIComponent(uid)}`);
-      if (res.ok) {
-        const data = await res.json();
-        if(ticketCountEl) ticketCountEl.textContent = data.tickets || 0;
-      }
-    } catch (e) {
-      console.warn('[refreshTickets]', e);
-    }
-  }
-
-  // Initial refresh
-  refreshTickets();
-
-  form.addEventListener('submit', (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const userId  = (userEl?.value || '').trim();
+
+    const email = emailEl?.value.trim();
     const entries = Number(entriesEl?.value || 1);
 
-    if (!userId || !Number.isFinite(entries) || entries < 1) {
-      show('Please enter a valid userId and entries (>= 1).', false);
+    if (!email || !Number.isFinite(entries) || entries < 1) {
+      show("Please enter a valid email and number of credits (>= 1).", false);
       return;
     }
 
-    // Persist info so success page can credit tickets
-    localStorage.setItem('tk_pending_checkout', JSON.stringify({ userId, entries }));
-    localStorage.setItem('raffle_last_userId', userId);
-    sessionStorage.setItem('raffle_userId', userId);
-    sessionStorage.setItem('raffle_entries', String(entries));
+    show("Initializing checkout…");
 
-    show('Redirecting to Stripe Checkout…');
+    try {
+      // Step 1️⃣ — Sync user in Crowbar
+      const syncRes = await fetch(`${CROWBAR_BASE}/sync-user`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Bridge-Token": BRIDGE_TOKEN,
+        },
+        body: JSON.stringify({
+          email,
+          product_type: "talentkonnect",
+          quantity: entries,
+        }),
+      });
 
-    // Open Stripe Checkout in a new tab
-    window.open(STRIPE_PAYMENT_LINK, '_blank');
-  });
+      if (!syncRes.ok) {
+        const err = await syncRes.text();
+        console.error("Sync-user failed:", err);
+        show("Failed to sync user with Crowbar.", false);
+        return;
+      }
 
-  // Refresh tickets if storage changes (other tab updates)
-  window.addEventListener('storage', (e) => {
-    if(e.key==='tk_pending_checkout' || e.key==='raffle_entries') refreshTickets();
+      // Step 2️⃣ — Create Stripe checkout session
+      const res = await fetch(`${CROWBAR_BASE}/create-checkout-session`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Bridge-Token": BRIDGE_TOKEN,
+        },
+        body: JSON.stringify({
+          email,
+          product_type: "talentkonnect",
+          quantity: entries,
+        }),
+      });
+
+      const data = await res.json();
+      console.log("Crowbar response:", data);
+
+      // ✅ Crowbar returns { success: true, sessionId: "...", url: "..." }
+      if (data?.url) {
+        show("Redirecting to Stripe Checkout…");
+        window.open(data.url, "_blank");
+      } else {
+        console.error("Unexpected response:", data);
+        show("Failed to start checkout.", false);
+      }
+    } catch (err) {
+      console.error("Payment init error:", err);
+      show("Error connecting to payment server.", false);
+    }
   });
 });

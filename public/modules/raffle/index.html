@@ -2,33 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Raffle</title>
+  <title>TalentKonnect | Payment</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="./style.css" />
   <script src="./script.js" defer></script>
 </head>
 <body>
   <div class="wrap">
-    <h1>Talent Credit</h1>
+    <h1>TalentKonnect – Talent Credit</h1>
 
-    <form id="raffleForm" class="card">
+    <form id="paymentForm" class="card">
       <label>
-        <span>User ID</span>
-        <input id="userId" name="userId"  type="text"  placeholder="demo-user-1" required />
+        <span>Email</span>
+        <input id="email" name="email" type="email" placeholder="user@example.com" required />
       </label>
 
       <label>
-        <span>Entries</span>
+        <span>Credit Quantity</span>
         <input id="entries" name="entries" type="number" min="1" value="1" required />
       </label>
 
-      <button class="btn" type="submit">Buy Entry</button>
-      <p class="hint">Stripe will open in a new page.</p>
+      <button class="btn" type="submit">Proceed to Payment</button>
+      <p class="hint">Stripe checkout will open in a new tab.</p>
     </form>
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </div>
-
-  
 </body>
 </html>
