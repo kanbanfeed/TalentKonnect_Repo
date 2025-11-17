@@ -22,7 +22,13 @@
         <input id="entries" name="entries" type="number" min="1" value="1" required />
       </label>
 
-      <button class="btn" type="submit">Proceed to Payment</button>
+      <button
+  class="btn"
+  type="button"
+  onclick="window.open('https://crowbar-master-site.vercel.app/demo-checkout', '_blank')"
+>
+  Proceed to Payment
+</button>
       <p class="hint">Stripe checkout will open in a new tab.</p>
     </form>
 
